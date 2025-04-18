@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.tsx';
 import JournalLayout from './components/journal/JournalLayout.tsx';
+import { Toaster } from 'react-hot-toast';
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,7 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <Toaster />
     <RouterProvider router={router} />
   </StrictMode>
 );
