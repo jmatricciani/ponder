@@ -1,12 +1,12 @@
 import { FormEvent, useRef, useState } from 'react';
-import { JournalEntry } from '../../../types/db-objects';
+import { JournalEntries } from '../../../types/db-objects';
 import toast from 'react-hot-toast';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { postJournalEntry } from '../../api';
 
 const JournalLayout = () => {
   const formRef = useRef<HTMLFormElement>(null);
-  const entry: JournalEntry = { content: '', user_id: 1 };
+  const entry: JournalEntries = { content: '', user_id: 1 };
   const [content, setContent] = useState('');
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -30,14 +30,16 @@ const JournalLayout = () => {
 
   return (
     <div>
-      <h1 className='text-3xl font-bold underline text-purple-400'>Journal</h1>
+      <h1 className='text-3xl font-bold underline text-purple-400 my-4'>
+        Journal
+      </h1>
       <form
         ref={formRef}
         onSubmit={handleSubmit}
       >
         <textarea
           className='bg-gray-50 text-black mt-5 text-xl p-5 indent-8'
-          rows={10}
+          rows={18}
           cols={60}
           value={content}
           onChange={(event) => setContent(event.target.value)}

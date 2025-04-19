@@ -5,6 +5,7 @@ import './index.css';
 import App from './App.tsx';
 import JournalLayout from './components/journal/JournalLayout.tsx';
 import { Toaster } from 'react-hot-toast';
+import TaskListLayout from './components/tasks/TaskListLayout.tsx';
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
   {
     path: '/journal',
     Component: JournalLayout,
+  },
+  {
+    path: '/tasks',
+    Component: TaskListLayout,
   },
 ]);
 
