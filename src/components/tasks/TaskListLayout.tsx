@@ -44,7 +44,7 @@ const TaskListLayout = () => {
         Task List
       </h1>
       <div className='bg-gray-50 w-1/2 h-5/6'>
-        <h2 className='text-gray-700 text-3xl my-4'>Ponder</h2>
+        <h2 className='text-gray-700 text-3xl my-8'>Ponder</h2>
         {tasks.map((task) => (
           <Task
             key={task.id}
