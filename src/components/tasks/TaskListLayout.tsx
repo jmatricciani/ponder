@@ -15,11 +15,10 @@ const TaskListLayout = () => {
 
   useEffect(() => {
     refetchData();
-  });
+  }, []);
 
   const refetchData = async () => {
     setTasks(await getAllTasks());
-    formRef.current?.lastElementChild?.scrollIntoView();
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -29,6 +28,7 @@ const TaskListLayout = () => {
       postTask(task);
       toast.success('Task Saved!');
       setContent('');
+      formRef.current?.lastElementChild?.scrollIntoView();
     }
   };
 
@@ -46,7 +46,7 @@ const TaskListLayout = () => {
     <>
       <NavBar />
       <div className='w-screen h-[90vh] flex'>
-        <SideBar />
+        <SideBar content={[]} />
         <div className='w-[80vw] flex flex-col items-center'>
           <h2 className='text-5xl font-bold text-gray-100 py-6'>Ponder</h2>
           <div className='bg-gray-50 w-3/4 h-[60vh] mt-5 pt-10 overflow-y-auto'>

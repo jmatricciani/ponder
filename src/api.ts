@@ -2,12 +2,20 @@ import { JournalEntries, Tasks } from './types/db-objects';
 
 export const baseUrl = 'http://localhost:3000';
 
-export const postJournalEntry = async (entry: JournalEntries) => {
+export const postJournalEntry = async (entry: Omit<JournalEntries, 'id'>) => {
   return await fetch(`${baseUrl}/journal-entries`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(entry),
   });
+};
+
+export const getAllJournalEntries = async (): Promise<JournalEntries[]> => {
+  const response = await fetch(`${baseUrl}/journal-entries`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  return response.json() as Promise<JournalEntries[]>;
 };
 
 export const getAllTasks = async (): Promise<Tasks[]> => {
