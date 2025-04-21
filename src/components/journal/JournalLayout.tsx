@@ -17,8 +17,7 @@ const JournalLayout = () => {
     user_id: 1,
     createdAt: dateTime,
   };
-
-  setInterval(() => setDateTime(new Date()), 1000);
+  const intervalID = setInterval(() => setDateTime(new Date()), 1000);
 
   useEffect(() => {
     refetchData();
@@ -35,6 +34,7 @@ const JournalLayout = () => {
     postJournalEntry(entry);
     toast.success('Journal Entry Saved!');
     setContent('');
+    clearInterval(intervalID);
   };
 
   useHotkeys(
