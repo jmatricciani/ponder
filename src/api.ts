@@ -1,4 +1,4 @@
-import { JournalEntries, Tasks } from '../types/db-objects';
+import { JournalEntries, Tasks } from './types/db-objects';
 
 export const baseUrl = 'http://localhost:3000';
 

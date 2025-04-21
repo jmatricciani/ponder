@@ -1,4 +1,4 @@
-import { Tasks } from '../../../types/db-objects';
+import { Tasks } from '../../types/db-objects';
 import { deleteTask, updateTaskCompleted } from '../../api';
 
 interface Props {
@@ -19,7 +19,7 @@ const Task = ({ task }: Props) => {
       />
       <p
         className={
-          'text-left mr-auto ' +
+          'text-left max-w-13/16 mr-auto ' +
           (task.completed ? 'text-gray-500' : 'text-black')
         }
       >
