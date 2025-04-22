@@ -17,24 +17,28 @@ const JournalLayout = () => {
     user_id: 1,
     createdAt: dateTime,
   };
-  const intervalID = setInterval(() => setDateTime(new Date()), 1000);
 
   useEffect(() => {
-    refetchData();
+    const intervalId = setInterval(() => setDateTime(new Date()), 1000);
+    return () => clearInterval(intervalId);
   }, []);
 
-  const refetchData = async () => {
+  useEffect(() => {
+    refetchEntries();
+  }, []);
+
+  const refetchEntries = async () => {
     setEntries(await getAllJournalEntries());
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     entry.content = content;
     entry.createdAt = dateTime;
-    postJournalEntry(entry);
+    await postJournalEntry(entry);
     toast.success('Journal Entry Saved!');
     setContent('');
-    clearInterval(intervalID);
+    await refetchEntries();
   };
 
   useHotkeys(

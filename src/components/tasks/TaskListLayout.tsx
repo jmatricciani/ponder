@@ -9,27 +9,35 @@ import SideBar from '../ui/SideBar';
 
 const TaskListLayout = () => {
   const formRef = useRef<HTMLFormElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const task: Omit<Tasks, 'id'> = { content: '', user_id: 1, completed: false };
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [content, setContent] = useState('');
   const [tasks, setTasks] = useState<Tasks[]>([]);
 
   useEffect(() => {
-    refetchData();
+    refetchTasks();
   }, []);
 
-  const refetchData = async () => {
+  useEffect(() => {
+    inputRef.current?.scrollIntoView();
+  }, [isSubmitting]);
+
+  const refetchTasks = async () => {
     setTasks(await getAllTasks());
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsSubmitting(true);
     if (content !== '') {
       task.content = content;
-      postTask(task);
+      await postTask(task);
       toast.success('Task Saved!');
       setContent('');
-      formRef.current?.lastElementChild?.scrollIntoView();
+      await refetchTasks();
     }
+    setIsSubmitting(false);
   };
 
   useHotkeys(
@@ -54,6 +62,7 @@ const TaskListLayout = () => {
               <Task
                 key={task.id}
                 task={task}
+                update={refetchTasks}
               />
             ))}
             <form
@@ -64,6 +73,7 @@ const TaskListLayout = () => {
                 className='bg-gray-200 text-black p-2 w-3/4 mb-4'
                 type='text'
                 value={content}
+                ref={inputRef}
                 onChange={(event) => setContent(event.target.value)}
               />
             </form>
