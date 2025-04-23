@@ -17,6 +17,10 @@ const router = createBrowserRouter([
     Component: JournalLayout,
   },
   {
+    path: '/journal/:id',
+    Component: JournalLayout,
+  },
+  {
     path: '/tasks',
     Component: TaskListLayout,
   },
