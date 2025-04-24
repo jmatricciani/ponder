@@ -1,6 +1,13 @@
-import { DBJournalEntry, TJournalEntry, Tasks } from './types/db-objects';
+import {
+  DBJournalEntry,
+  DBTask,
+  TJournalEntry,
+  TTask,
+} from './types/db-objects';
 
 export const baseUrl = 'http://localhost:3000';
+
+//JOURNAL
 
 export const postJournalEntry = async (entry: TJournalEntry) => {
   return await fetch(`${baseUrl}/journal-entries`, {
@@ -26,15 +33,17 @@ export const getJournalEntry = async (id: string): Promise<DBJournalEntry> => {
   return response.json() as Promise<DBJournalEntry>;
 };
 
-export const getAllTasks = async (): Promise<Tasks[]> => {
+export const getAllTasks = async (): Promise<DBTask[]> => {
   const response = await fetch(`${baseUrl}/tasks`, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   });
-  return response.json() as Promise<Tasks[]>;
+  return response.json() as Promise<DBTask[]>;
 };
 
-export const postTask = async (task: Omit<Tasks, 'id'>) => {
+//TASKS
+
+export const postTask = async (task: TTask) => {
   return await fetch(`${baseUrl}/tasks`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -42,14 +51,14 @@ export const postTask = async (task: Omit<Tasks, 'id'>) => {
   });
 };
 
-export const deleteTask = async (id: number) => {
+export const deleteTask = async (id: string) => {
   await fetch(`${baseUrl}/tasks/${id}`, {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
   });
 };
 
-export const updateTaskCompleted = async (id: number, completed: boolean) => {
+export const updateTaskCompleted = async (id: string, completed: boolean) => {
   await fetch(`${baseUrl}/tasks/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },

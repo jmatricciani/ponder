@@ -1,8 +1,8 @@
-import { Tasks } from '../../types/db-objects';
+import { DBTask } from '../../types/db-objects';
 import { deleteTask, updateTaskCompleted } from '../../api';
 
 interface Props {
-  task: Tasks;
+  task: DBTask;
   update: () => void;
 }
 
@@ -13,10 +13,10 @@ const Task = ({ task, update }: Props) => {
         className='cursor-pointer mr-5 w-5 h-5 rounded-2xl accent-green-400'
         type='checkbox'
         onChange={async () => {
-          await updateTaskCompleted(task.id, task.completed);
+          await updateTaskCompleted(task.id, Boolean(task.completed));
           update();
         }}
-        checked={task.completed}
+        checked={Boolean(task.completed)}
       />
       <p
         className={

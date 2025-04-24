@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { Tasks } from '../../types/db-objects';
+import { DBTask, TTask } from '../../types/db-objects';
 import toast from 'react-hot-toast';
 import { getAllTasks, postTask } from '../../api';
 import Task from './Task';
@@ -10,10 +10,15 @@ import SideBar from '../ui/SideBar';
 const TaskListLayout = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const task: Omit<Tasks, 'id'> = { content: '', user_id: 1, completed: false };
+  const task: TTask = {
+    content: '',
+    user_id: 1,
+    completed: false,
+    list_id: 1,
+  };
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [content, setContent] = useState('');
-  const [tasks, setTasks] = useState<Tasks[]>([]);
+  const [tasks, setTasks] = useState<DBTask[]>([]);
 
   useEffect(() => {
     refetchTasks();
