@@ -13,7 +13,7 @@ export type DBJournalEntry = {
 
 export type TTask = {
   user_id: number;
-  list_id: number;
+  list_id: string;
   content: string;
   completed: boolean;
 };
@@ -21,12 +21,13 @@ export type TTask = {
 export type DBTask = {
   id: string;
   user_id: string;
+  list_id: string;
   content: string;
   completed: string;
 };
 
 export type TTaskList = {
-  user_id: number;
+  user_id: string;
   title: string;
 };
 

@@ -3,10 +3,11 @@ import { deleteTask, updateTaskCompleted } from '../../api';
 
 interface Props {
   task: DBTask;
-  update: () => void;
+  listId: string | undefined;
+  update: (listId: string | undefined) => void;
 }
 
-const Task = ({ task, update }: Props) => {
+const Task = ({ task, listId, update }: Props) => {
   return (
     <div className='flex w-3/4 mx-auto my-5 items-center'>
       <input
@@ -14,7 +15,7 @@ const Task = ({ task, update }: Props) => {
         type='checkbox'
         onChange={async () => {
           await updateTaskCompleted(task.id, Boolean(task.completed));
-          update();
+          update(listId);
         }}
         checked={Boolean(task.completed)}
       />
@@ -30,7 +31,7 @@ const Task = ({ task, update }: Props) => {
         className='text-red-500 hover:text-red-700 cursor-pointer'
         onClick={async () => {
           await deleteTask(task.id);
-          update();
+          update(listId);
         }}
       >
         X

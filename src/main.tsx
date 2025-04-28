@@ -24,6 +24,10 @@ const router = createBrowserRouter([
     path: '/tasks',
     Component: TaskListLayout,
   },
+  {
+    path: '/tasks/:id',
+    Component: TaskListLayout,
+  },
 ]);
 
 createRoot(document.getElementById('root')!).render(
