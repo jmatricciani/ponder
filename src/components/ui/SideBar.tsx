@@ -1,7 +1,7 @@
-import { Link } from 'react-router';
-import { DBJournalEntry, DBTaskList } from '../../types/db-objects';
-import { dateToString } from '../../utils/date';
-import { deleteList } from '../../api';
+import { Link } from "react-router";
+import { DBJournalEntry, DBTaskList } from "../../types/db-objects";
+import { dateToString } from "../../utils/date";
+import { deleteList } from "../../api";
 
 interface Props {
   content: DBJournalEntry[] | DBTaskList[];
@@ -16,7 +16,7 @@ function isEntry(
 
 const SideBar = ({ content, update }: Props) => {
   return (
-    <div className='bg-[#292929] flex flex-col w-[20vw]'>
+    <div className="bg-[#292929] flex flex-col w-[20vw]">
       {content.map((entry) => (
         <Link
           key={entry.id}
@@ -27,9 +27,10 @@ const SideBar = ({ content, update }: Props) => {
               ? dateToString(new Date(entry.createdAt))
               : entry.title}
             <i
-              className='text-red-500 hover:text-red-700 cursor-pointer'
+              className="text-red-500 hover:text-red-700 cursor-pointer"
               onClick={async () => {
                 await deleteList(entry.id);
+                // await deleteListItems(entry.id);
                 update(entry.id);
               }}
             >
