@@ -70,9 +70,9 @@ const TaskListLayout = () => {
     if (id) {
       setList(await getTaskList(id));
     } else {
-      const list = await createNewList();
-      setList(await getTaskList(list.id));
-      setList(DEFAULT_LIST);
+      // const list = await createNewList();
+      // setList(await getTaskList(list.id));
+      // setList(DEFAULT_LIST);
     }
     return fetchedList?.title || '?';
   };
