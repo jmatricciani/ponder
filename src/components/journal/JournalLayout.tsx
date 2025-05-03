@@ -76,7 +76,11 @@ const JournalLayout = () => {
     <>
       <NavBar />
       <div className='w-screen h-[90vh] flex'>
-        <SideBar content={entries} />
+        <SideBar
+          id={id}
+          content={entries}
+          update={refetchEntries}
+        />
         <div className='w-[80vw] flex flex-col'>
           <h2 className='text-5xl font-bold text-gray-100 py-6'>
             {fetchedEntry
