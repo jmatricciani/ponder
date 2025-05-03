@@ -96,9 +96,14 @@ export const getTaskList = async (id: string): Promise<DBTaskList> => {
 };
 
 export const deleteList = async (id: string): Promise<void> => {
-  await fetch(`${baseUrl}/tasks?list_id=${id}`, {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
+  //get tasks by list_id
+  const allTasks = await getAllTasks();
+  const listTasks = allTasks.filter((task) => task.list_id === id);
+  listTasks.map(async (task) => {
+    await fetch(`${baseUrl}/tasks/${task.id}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
   });
   await fetch(`${baseUrl}/task-lists/${id}`, {
     method: "DELETE",

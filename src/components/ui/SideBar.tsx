@@ -1,10 +1,11 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { DBJournalEntry, DBTaskList } from "../../types/db-objects";
 import { dateToString } from "../../utils/date";
 import { deleteList } from "../../api";
 
 interface Props {
   content: DBJournalEntry[] | DBTaskList[];
+  id: string | undefined;
   update: (listId: string | undefined) => void;
 }
 
@@ -14,24 +15,30 @@ function isEntry(
   return (content as DBJournalEntry).createdAt !== undefined;
 }
 
-const SideBar = ({ content, update }: Props) => {
+const SideBar = ({ content, update, id }: Props) => {
+  const navigate = useNavigate();
   return (
     <div className="bg-[#292929] flex flex-col w-[20vw]">
-      {content.map((entry) => (
+      {content.map((item) => (
         <Link
-          key={entry.id}
-          to={isEntry(entry) ? `/journal/${entry.id}` : `/tasks/${entry.id}`}
+          key={item.id}
+          to={isEntry(item) ? `/journal/${item.id}` : `/tasks/${item.id}`}
         >
           <p>
-            {isEntry(entry)
-              ? dateToString(new Date(entry.createdAt))
-              : entry.title}
+            {isEntry(item)
+              ? dateToString(new Date(item.createdAt))
+              : item.title}
             <i
               className="text-red-500 hover:text-red-700 cursor-pointer"
               onClick={async () => {
-                await deleteList(entry.id);
+                if (id === item.id) {
+                  navigate("/tasks");
+                  //this should work...
+                  //run some console logs to be sure
+                }
+                await deleteList(item.id);
                 // await deleteListItems(entry.id);
-                update(entry.id);
+                update(item.id);
               }}
             >
               X

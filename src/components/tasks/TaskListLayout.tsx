@@ -128,7 +128,7 @@ const TaskListLayout = () => {
     <>
       <NavBar />
       <div className="w-screen h-[90vh] flex">
-        <SideBar content={lists} update={refetchLists} />
+        <SideBar content={lists} update={refetchLists} id={id} />
         {/* show different display when no id */}
         <div className="w-[80vw] flex flex-col items-center">
           {id ? (
