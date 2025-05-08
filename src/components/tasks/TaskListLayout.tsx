@@ -1,5 +1,4 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
 import { DBTask, DBTaskList, TTask } from '../../types/db-objects';
 import toast from 'react-hot-toast';
 import {
@@ -14,13 +13,14 @@ import Task from './Task';
 import NavBar from '../ui/NavBar';
 import SideBar from '../ui/SideBar';
 import { useNavigate, useParams } from 'react-router';
+import TaskCalendar from './TaskCalendar';
 
 const TaskListLayout = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const titleRef = useRef<HTMLInputElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { id } = useParams();
-  const task: TTask = {
+  const defaultTask: TTask = {
     content: '',
     user_id: 1,
     completed: false,
@@ -41,8 +41,10 @@ const TaskListLayout = () => {
   }, [id]);
 
   useEffect(() => {
-    refetchTasks(fetchedList?.id || '1');
-    setTitle(fetchedList?.title || '?');
+    if (fetchedList) {
+      refetchTasks(fetchedList.id);
+      setTitle(fetchedList.title);
+    }
   }, [fetchedList]);
 
   useEffect(() => {
@@ -64,12 +66,7 @@ const TaskListLayout = () => {
   const getList = async (id: string | undefined) => {
     if (id) {
       setList(await getTaskList(id));
-    } else {
-      // const list = await createNewList();
-      // setList(await getTaskList(list.id));
-      // setList(DEFAULT_LIST);
     }
-    // return fetchedList?.title || "?";
   };
 
   const createNewList = async (): Promise<DBTaskList> => {
@@ -81,7 +78,6 @@ const TaskListLayout = () => {
 
   const handleCreateList = async () => {
     const list = await createNewList();
-    //update sidebar
     refetchLists();
     navigate(`/tasks/${list.id}`);
   };
@@ -90,9 +86,9 @@ const TaskListLayout = () => {
     event.preventDefault();
     setIsSubmitting(true);
     if (content !== '') {
-      task.content = content;
-      task.list_id = fetchedList?.id || '1';
-      await postTask(task);
+      defaultTask.content = content;
+      defaultTask.list_id = fetchedList?.id || '1';
+      await postTask(defaultTask);
       toast.success('Task Saved!');
       setContent('');
       await refetchTasks(id || '1');
@@ -100,30 +96,17 @@ const TaskListLayout = () => {
     setIsSubmitting(false);
   };
 
-  const handleTitleEdit = async () => {
+  const handleTitleEdit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (titleRef.current) {
       setTitle(titleRef.current.value);
       await updateListTitle(fetchedList?.id || '1', titleRef.current.value);
       setIsEditing(false);
       await getList(fetchedList?.id);
-      //focus
       await refetchLists();
     }
   };
 
-  useHotkeys(
-    'enter',
-    (event) => {
-      event.preventDefault();
-      formRef.current?.requestSubmit();
-      // if (titleRef.current) {
-      handleTitleEdit();
-      // }
-    },
-    {
-      enableOnFormTags: ['INPUT'],
-    }
-  );
   return (
     <>
       <NavBar />
@@ -133,19 +116,20 @@ const TaskListLayout = () => {
           update={refetchLists}
           id={id}
         />
-        {/* show different display when no id */}
         <div className='w-[80vw] flex flex-col items-center'>
           {id ? (
             <>
               {isEditing ? (
-                <input
-                  className='bg-gray-200 text-black my-6 p-2 text-5xl'
-                  type='text'
-                  value={title}
-                  ref={titleRef}
-                  autoFocus
-                  onChange={(event) => setTitle(event.target.value)}
-                />
+                <form onSubmit={handleTitleEdit}>
+                  <input
+                    className='bg-gray-200 text-black my-6 p-2 text-5xl'
+                    type='text'
+                    value={title}
+                    ref={titleRef}
+                    autoFocus
+                    onChange={(event) => setTitle(event.target.value)}
+                  />
+                </form>
               ) : (
                 <h2
                   className='text-5xl font-bold text-gray-100 py-6'
@@ -179,8 +163,8 @@ const TaskListLayout = () => {
             </>
           ) : (
             <>
-              <h1>show button</h1>
               <button onClick={() => handleCreateList()}>Create</button>
+              <TaskCalendar />
             </>
           )}
         </div>
