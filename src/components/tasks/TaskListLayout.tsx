@@ -157,13 +157,21 @@ const TaskListLayout = () => {
                     update={refetchTasks}
                   />
                 ))}
-                <form ref={formRef} onSubmit={handleSubmit}>
+                <form
+                  ref={formRef}
+                  onSubmit={handleSubmit}
+                  className="relative"
+                >
                   <input
                     className="bg-gray-200 text-black p-2 w-3/4 mb-4"
                     type="text"
                     value={content}
                     ref={inputRef}
                     onChange={(event) => setContent(event.target.value)}
+                  />
+                  <input
+                    type="checkbox"
+                    className="absolute h-5 w-5 rounded-2xl accent-red-300 right-38 top-2.5"
                   />
                 </form>
               </div>
