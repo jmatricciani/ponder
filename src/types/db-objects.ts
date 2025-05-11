@@ -16,6 +16,8 @@ export type TTask = {
   list_id: string;
   content: string;
   completed: boolean;
+  hasDeadline: boolean;
+  deadline?: Date;
 };
 
 export type DBTask = {
@@ -23,16 +25,20 @@ export type DBTask = {
   user_id: string;
   list_id: string;
   content: string;
-  completed: string;
+  completed: boolean;
+  hasDeadline: boolean;
+  deadline?: string;
 };
 
 export type TTaskList = {
   user_id: string;
   title: string;
+  isDayList: boolean;
 };
 
 export type DBTaskList = {
   id: string;
   user_id: string;
   title: string;
+  isDayList: boolean;
 };
