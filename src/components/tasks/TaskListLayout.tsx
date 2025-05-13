@@ -43,6 +43,8 @@ const TaskListLayout = () => {
     getList(id);
     setIsEditing(false);
     refetchLists();
+    setTaskHasDeadline(false);
+    setTaskDeadline("");
   }, [id]);
 
   useEffect(() => {
@@ -157,21 +159,39 @@ const TaskListLayout = () => {
                 </span>
               )}
               <div className="bg-gray-50 w-3/4 h-[60vh] mt-5 pt-10 overflow-y-auto">
-                {tasks.map((task) => (
-                  <Task
-                    key={task.id}
-                    task={task}
-                    listId={fetchedList?.id}
-                    update={refetchTasks}
-                  />
-                ))}
+                {tasks
+                  .filter((task) => task.hasDeadline)
+                  .sort((a, b) => {
+                    return (
+                      Number(a.deadline?.split(":")[0]) -
+                      Number(b.deadline?.split(":")[0])
+                    );
+                  })
+                  .map((task) => (
+                    <Task
+                      key={task.id}
+                      task={task}
+                      listId={fetchedList?.id}
+                      update={refetchTasks}
+                    />
+                  ))}
+                {tasks
+                  .filter((task) => !task.hasDeadline)
+                  .map((task) => (
+                    <Task
+                      key={task.id}
+                      task={task}
+                      listId={fetchedList?.id}
+                      update={refetchTasks}
+                    />
+                  ))}
                 <form
                   ref={formRef}
                   onSubmit={handleSubmit}
                   className="relative"
                 >
                   <input
-                    className="bg-gray-200 text-black p-2 w-3/4 mb-4"
+                    className="bg-gray-200 text-black p-2 w-3/4 mb-4 px-10"
                     type="text"
                     value={content}
                     ref={inputRef}

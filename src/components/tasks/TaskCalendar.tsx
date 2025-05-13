@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import CalendarCell from "./CalendarCell";
 import { dateToString } from "../../utils/date";
 import { differenceInDays, endOfMonth, format, startOfMonth } from "date-fns";
-import { DBTaskList } from "../../types/db-objects";
-import { getAllLists } from "../../api";
+import { DBTask, DBTaskList } from "../../types/db-objects";
+import { getAllLists, getAllTasks } from "../../api";
 
 const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const PREV_DAY_LIMIT = 3;
@@ -11,6 +11,7 @@ const PREV_DAY_LIMIT = 3;
 const TaskCalendar = () => {
   const [date, setDate] = useState<Date>(new Date());
   const [dayLists, setDayLists] = useState<DBTaskList[]>([]);
+  const [allTasks, setAllTasks] = useState<DBTask[]>([]);
   const firstOfMonth = startOfMonth(date);
   const lastOfMonth = endOfMonth(date);
 
@@ -24,6 +25,20 @@ const TaskCalendar = () => {
     setDayLists(lists.filter((list) => list.isDayList));
   };
 
+  const getTasks = async () => {
+    const tasks = await getAllTasks();
+    setAllTasks(tasks);
+  };
+
+  const getListByDate = (date: string) => {
+    return dayLists.filter((list) => list.title === date && list.isDayList)[0];
+  };
+
+  const getTasksByListId = (id: string) => {
+    return allTasks.filter((task) => task.list_id === id);
+  };
+
+  //fix this
   const isPrevDayList = (date: Date, currentDate: Date) => {
     //make sure that a day list for the day actually exists
     const diffInDays = differenceInDays(date, currentDate);
@@ -34,19 +49,29 @@ const TaskCalendar = () => {
     }
   };
 
+  const listHasDeadline = (date: string) => {
+    const list = getListByDate(date);
+    const tasks = getTasksByListId(list.id);
+    return tasks.filter((task) => task.hasDeadline).length > 0 ? true : false;
+  };
+
   useEffect(() => {
-    setDate(new Date());
+    setDate(new Date()); //not really being used
     getDayLists();
+    getTasks();
   }, []);
 
-  const highlightCells = (date: Date, currentDate: Date) => {
+  const highlightCells = (cellDate: Date) => {
+    const currentDate = new Date();
     const lists = dayLists.map((list) => list.title);
-    const hasList = lists.includes(format(date, "MM/dd/yy"));
-    if (format(date, "MM/dd/yy") === format(currentDate, "MM/dd/yy")) {
+    const hasList = lists.includes(format(cellDate, "MM/dd/yy"));
+    if (format(cellDate, "MM/dd/yy") === format(currentDate, "MM/dd/yy")) {
       return "bg-blue-300";
-    } else if (hasList && isPrevDayList(date, currentDate)) {
+    } else if (hasList && listHasDeadline(format(cellDate, "MM/dd/yy"))) {
+      return "bg-red-300";
+    } else if (hasList && isPrevDayList(cellDate, currentDate)) {
       return "bg-gray-300";
-    } else if (hasList && differenceInDays(date, currentDate) >= 0) {
+    } else if (hasList && differenceInDays(cellDate, currentDate) >= 0) {
       //conditional should be > 0, look into this
       return "bg-green-300";
     }
@@ -72,7 +97,7 @@ const TaskCalendar = () => {
           );
           return (
             <CalendarCell
-              className={highlightCells(cellDate, date)}
+              className={highlightCells(cellDate)}
               date={cellDate}
               key={index}
             >
