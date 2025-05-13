@@ -35,6 +35,8 @@ const TaskListLayout = () => {
   const [tasks, setTasks] = useState<DBTask[]>([]);
   const [fetchedList, setList] = useState<DBTaskList>();
   const [lists, setLists] = useState<DBTaskList[]>([]);
+  const [taskHasDeadline, setTaskHasDeadline] = useState<boolean>(false);
+  const [taskDeadline, setTaskDeadline] = useState<string>("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -92,11 +94,17 @@ const TaskListLayout = () => {
     event.preventDefault();
     setIsSubmitting(true);
     if (content !== "") {
+      console.log(taskDeadline);
+      console.log(taskHasDeadline);
       defaultTask.content = content;
       defaultTask.list_id = fetchedList?.id || "1";
+      defaultTask.hasDeadline = taskHasDeadline;
+      defaultTask.deadline = taskDeadline;
       await postTask(defaultTask);
       toast.success("Task Saved!");
       setContent("");
+      setTaskDeadline("");
+      setTaskHasDeadline(false);
       await refetchTasks(id || "1");
     }
     setIsSubmitting(false);
@@ -169,10 +177,24 @@ const TaskListLayout = () => {
                     ref={inputRef}
                     onChange={(event) => setContent(event.target.value)}
                   />
-                  <input
-                    type="checkbox"
-                    className="absolute h-5 w-5 rounded-2xl accent-red-300 right-38 top-2.5"
-                  />
+                  {fetchedList?.isDayList && (
+                    <input
+                      type="checkbox"
+                      className="absolute h-5 w-5 rounded-2xl accent-red-300 right-38 top-2.5"
+                      checked={taskHasDeadline}
+                      onChange={() => setTaskHasDeadline(!taskHasDeadline)}
+                    />
+                  )}
+                  {taskHasDeadline && (
+                    <input
+                      type="time"
+                      className="absolute h-14 right-12 top-9 p-4 px-8 bg-gray-300 text-black"
+                      value={taskDeadline}
+                      onChange={(event) => {
+                        setTaskDeadline(event.target.value);
+                      }}
+                    />
+                  )}
                 </form>
               </div>
             </>

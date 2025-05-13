@@ -17,7 +17,7 @@ export type TTask = {
   content: string;
   completed: boolean;
   hasDeadline: boolean;
-  deadline?: Date;
+  deadline?: string;
 };
 
 export type DBTask = {
