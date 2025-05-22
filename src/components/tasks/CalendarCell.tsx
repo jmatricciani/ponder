@@ -9,7 +9,7 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from '@radix-ui/react-hover-card';
+} from '../ui/hover-card';
 
 interface Props {
   className?: string;
