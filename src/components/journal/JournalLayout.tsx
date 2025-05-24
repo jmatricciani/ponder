@@ -89,7 +89,7 @@ const JournalLayout = () => {
           </h2>
           {fetchedEntry ? (
             <>
-              <div className='text-xl p-5 w-3/4 h-[60vh] indent-8 mx-auto mt-5 mb-4 overflow-y-auto text-left'>
+              <div className='text-xl p-5 w-3/4 h-[60vh] indent-8 mx-auto mt-5 mb-4 overflow-y-auto text-left text-gray-100'>
                 {fetchedEntry.content.split('\n').map((paragraph) => (
                   <p>
                     {paragraph}

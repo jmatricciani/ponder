@@ -18,7 +18,7 @@ function isEntry(
 const SideBar = ({ content, update, id }: Props) => {
   const navigate = useNavigate();
   return (
-    <div className='bg-[#292929] flex flex-col w-[20vw]'>
+    <div className='bg-[#292929] flex flex-col w-[20vw] overflow-y-auto'>
       {content.map((item) => (
         <Link
           key={item.id}
