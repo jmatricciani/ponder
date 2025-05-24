@@ -231,8 +231,13 @@ const TaskListLayout = () => {
             </>
           ) : (
             <>
-              <button onClick={() => handleCreateList()}>Create</button>
               <TaskCalendar />
+              <button
+                className='mt-2'
+                onClick={() => handleCreateList()}
+              >
+                Create List
+              </button>
             </>
           )}
         </div>

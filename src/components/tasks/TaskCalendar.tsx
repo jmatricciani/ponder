@@ -1,7 +1,14 @@
 import { useEffect, useState } from 'react';
 import CalendarCell from './CalendarCell';
 import { dateToString } from '../../utils/date';
-import { differenceInDays, endOfMonth, format, startOfMonth } from 'date-fns';
+import {
+  add,
+  differenceInDays,
+  endOfMonth,
+  format,
+  startOfMonth,
+  sub,
+} from 'date-fns';
 import { DBTask, DBTaskList } from '../../types/db-objects';
 import { getAllLists, getAllTasks } from '../../api';
 
@@ -80,7 +87,27 @@ const TaskCalendar = () => {
   };
   return (
     <>
-      <h2>{dateToString(date)}</h2>
+      <div className='flex flex-row items-center gap-5'>
+        <button
+          className='h-1/2'
+          onClick={() => {
+            setDate(sub(date, { months: 1 }));
+          }}
+        >
+          back
+        </button>
+        <h2 className='text-5xl font-bold text-gray-100 py-6'>
+          {dateToString(date, true)}
+        </h2>
+        <button
+          className='h-1/2'
+          onClick={() => {
+            setDate(add(date, { months: 1 }));
+          }}
+        >
+          forward
+        </button>
+      </div>
       <div className='h-8 bg-gray-100 text-black w-3/4 grid grid-cols-7 items-center'>
         {DAYS_OF_WEEK.map((day) => (
           <div key={day}>{day}</div>
