@@ -10,6 +10,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from '../ui/hover-card';
+import { formatTime } from './Task';
 
 interface Props {
   className?: string;
@@ -57,7 +58,7 @@ const CalendarCell: React.FC<React.PropsWithChildren<Props>> = ({
         {deadlines
           ? deadlines.map((task) => (
               <h6 className='text-red-600'>
-                {task.deadline + ' ' + task.content}
+                {formatTime(task.deadline) + ' - ' + task.content}
               </h6>
             ))
           : ''}

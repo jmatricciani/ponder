@@ -96,8 +96,8 @@ const TaskListLayout = () => {
     event.preventDefault();
     setIsSubmitting(true);
     if (content !== '') {
-      console.log(taskDeadline);
-      console.log(taskHasDeadline);
+      // console.log(taskDeadline);
+      // console.log(taskHasDeadline);
       defaultTask.content = content;
       defaultTask.list_id = fetchedList?.id || '1';
       defaultTask.hasDeadline = taskHasDeadline;
@@ -165,11 +165,18 @@ const TaskListLayout = () => {
               <div className='bg-gray-50 w-3/4 h-[60vh] mt-5 pt-10 overflow-y-auto'>
                 {tasks
                   .filter((task) => task.hasDeadline)
+                  //better sorting method
                   .sort((a, b) => {
-                    return (
-                      Number(a.deadline?.split(':')[0]) -
-                      Number(b.deadline?.split(':')[0])
-                    );
+                    const timeA = a.deadline?.split(':');
+                    const timeB = b.deadline?.split(':');
+                    if (timeA && timeB) {
+                      if (timeA[0] === timeB[0]) {
+                        return Number(timeA[1]) - Number(timeB[1]);
+                      } else {
+                        return Number(timeA[0]) - Number(timeB[0]);
+                      }
+                    }
+                    return 0;
                   })
                   .map((task) => (
                     <Task

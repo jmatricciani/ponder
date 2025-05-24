@@ -6,7 +6,7 @@ import { DBTask, DBTaskList } from '../../types/db-objects';
 import { getAllLists, getAllTasks } from '../../api';
 
 const DAYS_OF_WEEK = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const PREV_DAY_LIMIT = 3;
+// const PREV_DAY_LIMIT = 3;
 
 const TaskCalendar = () => {
   const [date, setDate] = useState<Date>(new Date());
@@ -39,15 +39,15 @@ const TaskCalendar = () => {
   };
 
   //fix this
-  const isPrevDayList = (date: Date, currentDate: Date) => {
-    //make sure that a day list for the day actually exists
-    const diffInDays = differenceInDays(date, currentDate);
-    if (diffInDays >= -PREV_DAY_LIMIT && diffInDays < 0) {
-      return true;
-    } else {
-      return false;
-    }
-  };
+  // const isPrevDayList = (date: Date, currentDate: Date) => {
+  //   //make sure that a day list for the day actually exists
+  //   const diffInDays = differenceInDays(date, currentDate);
+  //   if (diffInDays < 0) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // };
 
   const listHasDeadline = (date: string) => {
     const list = getListByDate(date);
@@ -65,12 +65,14 @@ const TaskCalendar = () => {
     const currentDate = new Date();
     const lists = dayLists.map((list) => list.title);
     const hasList = lists.includes(format(cellDate, 'MM/dd/yy'));
-    if (format(cellDate, 'MM/dd/yy') === format(currentDate, 'MM/dd/yy')) {
+    if (hasList && differenceInDays(cellDate, currentDate) < 0) {
+      return 'bg-gray-300';
+    } else if (
+      format(cellDate, 'MM/dd/yy') === format(currentDate, 'MM/dd/yy')
+    ) {
       return 'bg-blue-300';
     } else if (hasList && listHasDeadline(format(cellDate, 'MM/dd/yy'))) {
       return 'bg-red-300';
-    } else if (hasList && isPrevDayList(cellDate, currentDate)) {
-      return 'bg-gray-300';
     } else if (hasList && differenceInDays(cellDate, currentDate) >= 0) {
       //conditional should be > 0, look into this
       return 'bg-green-300';
@@ -102,10 +104,16 @@ const TaskCalendar = () => {
           const deadlines =
             filterDeadlines.length > 0
               ? filterDeadlines.sort((a, b) => {
-                  return (
-                    Number(a.deadline?.split(':')[0]) -
-                    Number(b.deadline?.split(':')[0])
-                  );
+                  const timeA = a.deadline?.split(':');
+                  const timeB = b.deadline?.split(':');
+                  if (timeA && timeB) {
+                    if (timeA[0] === timeB[0]) {
+                      return Number(timeA[1]) - Number(timeB[1]);
+                    } else {
+                      return Number(timeA[0]) - Number(timeB[0]);
+                    }
+                  }
+                  return 0;
                 })
               : undefined;
           return (
