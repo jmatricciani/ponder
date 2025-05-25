@@ -12,6 +12,7 @@ import SideBar from '../ui/SideBar';
 import { dateToString } from '../../utils/date';
 import { useParams } from 'react-router';
 import { wordCount } from '../../utils/string';
+// import { AuthContext } from '@/providers/AuthProvider';
 
 const JournalLayout = () => {
   const formRef = useRef<HTMLFormElement>(null);
@@ -20,6 +21,7 @@ const JournalLayout = () => {
   const [entries, setEntries] = useState<DBJournalEntry[]>([]);
   const [fetchedEntry, setEntry] = useState<DBJournalEntry>();
   const { id } = useParams();
+  // const { user } = useContext(AuthContext);
   const entry: TJournalEntry = {
     content: '',
     user_id: 1,

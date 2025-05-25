@@ -4,13 +4,12 @@ import { postTaskList } from '../../api';
 import { DBTask, DBTaskList } from '../../types/db-objects';
 import { useNavigate } from 'react-router';
 import { format } from 'date-fns';
-import { getListOfDay } from '../../utils/date';
+import { formatTime, getListOfDay } from '../../utils/date';
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from '../ui/hover-card';
-import { formatTime } from './Task';
 
 interface Props {
   className?: string;

@@ -1,3 +1,4 @@
+import { DBUser, TUser } from './providers/AuthProvider';
 import {
   DBJournalEntry,
   DBTask,
@@ -123,4 +124,23 @@ export const updateListTitle = async (id: string, title: string) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ title: title }),
   });
+};
+
+// Users
+
+export const postUser = async (user: TUser): Promise<DBUser> => {
+  const response = await fetch(`${baseUrl}/users`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(user),
+  });
+  return response.json() as Promise<DBUser>;
+};
+
+export const getAllUsers = async (): Promise<DBUser[]> => {
+  const response = await fetch(`${baseUrl}/users`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  return response.json() as Promise<DBUser[]>;
 };
