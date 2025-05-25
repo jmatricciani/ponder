@@ -12,7 +12,6 @@ import SideBar from '../ui/SideBar';
 import { dateToString } from '../../utils/date';
 import { useParams } from 'react-router';
 import { wordCount } from '../../utils/string';
-// import { AuthContext } from '@/providers/AuthProvider';
 
 const JournalLayout = () => {
   const formRef = useRef<HTMLFormElement>(null);
@@ -21,7 +20,6 @@ const JournalLayout = () => {
   const [entries, setEntries] = useState<DBJournalEntry[]>([]);
   const [fetchedEntry, setEntry] = useState<DBJournalEntry>();
   const { id } = useParams();
-  // const { user } = useContext(AuthContext);
   const entry: TJournalEntry = {
     content: '',
     user_id: 1,
@@ -101,8 +99,12 @@ const JournalLayout = () => {
               </div>
 
               <div className='flex place-content-around w-3/4 items-center m-auto'>
-                <span>Character Count: {fetchedEntry.content.length}</span>
-                <span>Word Count: {wordCount(fetchedEntry.content)}</span>
+                <span className='text-xl text-gray-100'>
+                  Character Count: {fetchedEntry.content.length}
+                </span>
+                <span className='text-xl text-gray-100'>
+                  Word Count: {wordCount(fetchedEntry.content)}
+                </span>
               </div>
             </>
           ) : (
@@ -133,8 +135,12 @@ const JournalLayout = () => {
                 >
                   Save
                 </button>
-                <span>Character Count: {content.length}</span>
-                <span>Word Count: {wordCount(content)}</span>
+                <span className='text-gray-100 text-lg'>
+                  Character Count: {content.length}
+                </span>
+                <span className='text-gray-100 text-lg'>
+                  Word Count: {wordCount(content)}
+                </span>
               </div>
             </form>
           )}

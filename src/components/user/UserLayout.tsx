@@ -1,5 +1,5 @@
 import { getAllUsers, postUser } from '@/api';
-import { AuthContext } from '@/providers/AuthProvider';
+import { AuthContext } from '@/providers/contexts';
 import { FormEvent, useContext, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link, useLocation, useNavigate } from 'react-router';
@@ -28,22 +28,16 @@ const UserLayout = () => {
       const user = users.find(
         (user) => user.username === username && user.password === password
       );
-      console.log('Submitted');
-      console.log(users);
-      console.log(user);
       if (user) {
         setUser(user);
         toast.success('You are now logged in!');
-        //redirect
+        localStorage.setItem('user', JSON.stringify(user));
         navigate('/');
       } else {
         toast.error('Incorrect Login Credentials');
       }
     } else {
-      //validation
-      const user = await postUser({ username: username, password: password });
-      console.log('attempted post user');
-      console.log(user);
+      await postUser({ username: username, password: password });
     }
   };
   return (

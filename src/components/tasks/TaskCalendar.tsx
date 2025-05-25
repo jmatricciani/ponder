@@ -89,23 +89,23 @@ const TaskCalendar = () => {
     <>
       <div className='flex flex-row items-center gap-5'>
         <button
-          className='h-1/2'
+          className='h-1/2 text-gray-100'
           onClick={() => {
             setDate(sub(date, { months: 1 }));
           }}
         >
-          back
+          &#60;
         </button>
         <h2 className='text-5xl font-bold text-gray-100 py-6'>
           {dateToString(date, true)}
         </h2>
         <button
-          className='h-1/2'
+          className='h-1/2 text-gray-100'
           onClick={() => {
             setDate(add(date, { months: 1 }));
           }}
         >
-          forward
+          &#62;
         </button>
       </div>
       <div className='h-8 bg-gray-100 text-black w-3/4 grid grid-cols-7 items-center'>

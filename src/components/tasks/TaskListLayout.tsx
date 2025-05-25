@@ -96,8 +96,6 @@ const TaskListLayout = () => {
     event.preventDefault();
     setIsSubmitting(true);
     if (content !== '') {
-      // console.log(taskDeadline);
-      // console.log(taskHasDeadline);
       defaultTask.content = content;
       defaultTask.list_id = fetchedList?.id || '1';
       defaultTask.hasDeadline = taskHasDeadline;
@@ -233,7 +231,7 @@ const TaskListLayout = () => {
             <>
               <TaskCalendar />
               <button
-                className='mt-2'
+                className='mt-2 text-gray-100'
                 onClick={() => handleCreateList()}
               >
                 Create List

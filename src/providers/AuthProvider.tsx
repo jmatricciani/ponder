@@ -1,4 +1,5 @@
-import React, { createContext, ReactNode, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
+import { AuthContext, DEFAULT_USER } from './contexts';
 
 export type TUser = {
   username: string;
@@ -16,19 +17,15 @@ export type TAuthContext = {
   setUser: React.Dispatch<React.SetStateAction<DBUser>>;
 };
 
-const DEFAULT_USER = {
-  id: '',
-  username: '',
-  password: '',
-};
-
-export const AuthContext = createContext<TAuthContext>({} as TAuthContext);
-
 const AuthProvider = ({ children }: { children: ReactNode }) => {
-  //store state
   const [user, setUser] = useState<DBUser>(DEFAULT_USER);
-  //pass types into value
-  //functions here
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      setUser(JSON.parse(user));
+    }
+  }, []);
   return (
     <AuthContext.Provider value={{ user, setUser }}>
       {children}
