@@ -1,16 +1,6 @@
 import { DBTask } from '../../types/db-objects';
 import { deleteTask, updateTaskCompleted } from '../../api';
-
-export const formatTime = (time: string | undefined) => {
-  if (time) {
-    const [hours, minutes] = time.split(':').map(Number);
-
-    const period = hours < 12 || hours === 24 ? 'AM' : 'PM';
-    const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
-    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-    return `${formattedHours}:${formattedMinutes} ${period}`;
-  }
-};
+import { formatTime } from '@/utils/date';
 
 interface Props {
   task: DBTask;

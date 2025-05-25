@@ -37,3 +37,14 @@ export const getListOfDay = async (
   const listWithName = lists.filter((list) => list.title === name);
   return listWithName.length === 1 ? listWithName[0] : undefined;
 };
+
+export const formatTime = (time: string | undefined) => {
+  if (time) {
+    const [hours, minutes] = time.split(':').map(Number);
+
+    const period = hours < 12 || hours === 24 ? 'AM' : 'PM';
+    const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+    return `${formattedHours}:${formattedMinutes} ${period}`;
+  }
+};
