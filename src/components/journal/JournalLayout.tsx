@@ -3,6 +3,7 @@ import { DBJournalEntry, TJournalEntry } from '../../types/db-objects';
 import toast from 'react-hot-toast';
 import { useHotkeys } from 'react-hotkeys-hook';
 import {
+  deleteEntry,
   getAllJournalEntries,
   getJournalEntry,
   postJournalEntry,
@@ -10,21 +11,23 @@ import {
 import NavBar from '../ui/NavBar';
 import SideBar from '../ui/SideBar';
 import { dateToString } from '../../utils/date';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { wordCount } from '../../utils/string';
+import { format } from 'date-fns';
 
 const JournalLayout = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const [content, setContent] = useState('');
-  const [dateTime, setDateTime] = useState(new Date());
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [entries, setEntries] = useState<DBJournalEntry[]>([]);
   const [fetchedEntry, setEntry] = useState<DBJournalEntry>();
   const { id } = useParams();
   const entry: TJournalEntry = {
     content: '',
     user_id: 1,
-    createdAt: dateTime,
+    createdAt: currentDateTime,
   };
+  const navigate = useNavigate();
 
   const getEntry = async (id: string | undefined) => {
     if (id) {
@@ -43,7 +46,7 @@ const JournalLayout = () => {
   }, [id]);
 
   useEffect(() => {
-    const intervalId = setInterval(() => setDateTime(new Date()), 1000);
+    const intervalId = setInterval(() => setCurrentDateTime(new Date()), 1000);
     return () => clearInterval(intervalId);
   }, []);
 
@@ -54,7 +57,7 @@ const JournalLayout = () => {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     entry.content = content;
-    entry.createdAt = dateTime;
+    entry.createdAt = currentDateTime;
     await postJournalEntry(entry);
     toast.success('Journal Entry Saved!');
     setContent('');
@@ -78,15 +81,32 @@ const JournalLayout = () => {
       <div className='w-screen h-[90vh] flex'>
         <SideBar
           id={id}
-          content={entries}
+          journalEntries={entries}
           update={refetchEntries}
         />
         <div className='w-[80vw] flex flex-col bg-slate-700'>
-          <h2 className='text-5xl font-bold text-gray-100 py-6'>
-            {fetchedEntry
-              ? dateToString(new Date(fetchedEntry.createdAt))
-              : dateToString(dateTime)}
-          </h2>
+          <span className='flex flex-row justify-center gap-4'>
+            <h2 className='text-5xl font-bold text-gray-100 py-6'>
+              {fetchedEntry
+                ? format(
+                    new Date(fetchedEntry.createdAt),
+                    'E, MMM dd, yyyy - h:mm aaa'
+                  )
+                : dateToString(currentDateTime)}
+            </h2>
+            {fetchedEntry && (
+              <button
+                className='text-5xl text-red-600 m-5'
+                onClick={async () => {
+                  await deleteEntry(fetchedEntry.id);
+                  navigate('/journal');
+                  await refetchEntries();
+                }}
+              >
+                X
+              </button>
+            )}
+          </span>
           {fetchedEntry ? (
             <>
               <div className='text-xl p-5 w-3/4 h-[60vh] indent-8 mx-auto mt-5 mb-4 overflow-y-auto text-left text-gray-100'>

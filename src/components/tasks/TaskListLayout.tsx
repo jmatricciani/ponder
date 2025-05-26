@@ -42,17 +42,22 @@ const TaskListLayout = () => {
   useEffect(() => {
     getList(id);
     setIsEditing(false);
-    refetchLists();
+    // refetchLists();
     setTaskHasDeadline(false);
     setTaskDeadline('');
   }, [id]);
 
   useEffect(() => {
     if (fetchedList) {
-      refetchTasks(fetchedList.id);
+      refetchTasks();
       setTitle(fetchedList.title);
     }
   }, [fetchedList]);
+
+  useEffect(() => {
+    refetchLists();
+    refetchTasks();
+  }, []);
 
   useEffect(() => {
     inputRef.current?.scrollIntoView();
@@ -63,8 +68,8 @@ const TaskListLayout = () => {
     setLists(lists.filter((list) => !list.isDayList));
   };
 
-  const refetchTasks = async (id: string | undefined) => {
-    setTasks((await getAllTasks()).filter((task) => task.list_id === id));
+  const refetchTasks = async () => {
+    setTasks(await getAllTasks());
   };
 
   const getList = async (id: string | undefined) => {
@@ -105,7 +110,7 @@ const TaskListLayout = () => {
       setContent('');
       setTaskDeadline('');
       setTaskHasDeadline(false);
-      await refetchTasks(id || '1');
+      await refetchTasks();
     }
     setIsSubmitting(false);
   };
@@ -126,7 +131,8 @@ const TaskListLayout = () => {
       <NavBar />
       <div className='w-screen h-[90vh] flex'>
         <SideBar
-          content={lists}
+          tasks={tasks}
+          taskLists={lists}
           update={refetchLists}
           id={id}
         />
@@ -162,6 +168,7 @@ const TaskListLayout = () => {
               )}
               <div className='bg-gray-50 w-3/4 h-[60vh] mt-5 pt-10 overflow-y-auto'>
                 {tasks
+                  .filter((task) => task.list_id === id)
                   .filter((task) => task.hasDeadline)
                   //better sorting method
                   .sort((a, b) => {
@@ -185,6 +192,7 @@ const TaskListLayout = () => {
                     />
                   ))}
                 {tasks
+                  .filter((task) => task.list_id === id)
                   .filter((task) => !task.hasDeadline)
                   .map((task) => (
                     <Task

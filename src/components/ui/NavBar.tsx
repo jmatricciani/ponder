@@ -1,6 +1,14 @@
 import { AuthContext, DEFAULT_USER } from '@/providers/contexts';
 import { useContext } from 'react';
 import { Link, useNavigate } from 'react-router';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './dropdown-menu';
 
 const NavBar = () => {
   const { user, setUser } = useContext(AuthContext);
@@ -8,7 +16,6 @@ const NavBar = () => {
   const navigate = useNavigate();
   return (
     <div className='w-screen h-[10vh] bg-[#353632] flex items-center'>
-      {/* <span className='mx-10'>LOGO</span> */}
       <Link
         className='mx-10'
         to='/'
@@ -34,20 +41,31 @@ const NavBar = () => {
         )}
       </span>
       <span className='mx-10 text-gray-100'>
-        {isUserLoggedIn ? user.username : <Link to='/user/login'>LOGIN</Link>}
         {isUserLoggedIn ? (
-          <button
-            className='ml-5'
-            onClick={() => {
-              setUser(DEFAULT_USER);
-              localStorage.removeItem('user');
-              navigate('/');
-            }}
-          >
-            Logout
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger>{user.username}</DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>My Info</DropdownMenuItem>
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem>Subscription</DropdownMenuItem>
+              <DropdownMenuItem>
+                <button
+                  className='text-gray-100 w-full'
+                  onClick={() => {
+                    setUser(DEFAULT_USER);
+                    localStorage.removeItem('user');
+                    navigate('/');
+                  }}
+                >
+                  Logout
+                </button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         ) : (
-          ''
+          <Link to='/user/login'>LOGIN</Link>
         )}
       </span>
     </div>
