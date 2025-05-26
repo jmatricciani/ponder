@@ -144,3 +144,26 @@ export const getAllUsers = async (): Promise<DBUser[]> => {
   });
   return response.json() as Promise<DBUser[]>;
 };
+
+export const updateUserSettings = async (
+  id: string,
+  alias: string,
+  daysUntilListExpires: string
+) => {
+  await fetch(`${baseUrl}/users/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      alias: alias,
+      daysUntilListExpires: daysUntilListExpires,
+    }),
+  });
+};
+
+export const getUserById = async (id: string) => {
+  const response = await fetch(`${baseUrl}/users/${id}`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  return response.json() as Promise<DBUser>;
+};

@@ -43,13 +43,15 @@ const NavBar = () => {
       <span className='mx-10 text-gray-100'>
         {isUserLoggedIn ? (
           <DropdownMenu>
-            <DropdownMenuTrigger>{user.username}</DropdownMenuTrigger>
+            <DropdownMenuTrigger>
+              {user.alias ? user.alias : user.username}
+            </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>My Info</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Subscription</DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link to={`/user/${user.id}`}>Preferences</Link>
+              </DropdownMenuItem>
               <DropdownMenuItem>
                 <button
                   className='text-gray-100 w-full'

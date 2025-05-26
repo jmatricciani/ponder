@@ -8,6 +8,7 @@ import { Toaster } from 'react-hot-toast';
 import TaskListLayout from './components/tasks/TaskListLayout.tsx';
 import AuthProvider from './providers/AuthProvider.tsx';
 import UserLayout from './components/user/UserLayout.tsx';
+import { ThemeProvider } from './providers/ThemeProvider.tsx';
 
 const router = createBrowserRouter([
   {
@@ -42,13 +43,19 @@ const router = createBrowserRouter([
     path: '/user/register',
     Component: UserLayout,
   },
+  {
+    path: '/user/:id',
+    Component: UserLayout,
+  },
 ]);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
-      <Toaster />
-      <RouterProvider router={router} />
+      <ThemeProvider>
+        <Toaster />
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </AuthProvider>
   </StrictMode>
 );
