@@ -44,7 +44,14 @@ const NavBar = () => {
         {isUserLoggedIn ? (
           <DropdownMenu>
             <DropdownMenuTrigger>
-              {user.alias ? user.alias : user.username}
+              <div className='flex flex-row gap-2 items-center'>
+                <img
+                  className='w-5 h-5'
+                  src={user.image}
+                  alt=''
+                />
+                {user.alias ? user.alias : user.username}
+              </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuLabel>My Account</DropdownMenuLabel>

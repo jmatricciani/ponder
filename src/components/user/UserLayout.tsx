@@ -1,4 +1,9 @@
-import { getAllUsers, postUser, updateUserSettings } from '@/api';
+import {
+  getAllUsers,
+  postUser,
+  updateUserProfileImage,
+  updateUserSettings,
+} from '@/api';
 import { AuthContext, DEFAULT_IMAGE } from '@/providers/contexts';
 import { FormEvent, useContext, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -31,6 +36,8 @@ const UserLayout = () => {
   const [daysUntilEntryExpires, setDaysUntilEntryExpires] =
     useState<string>('');
   const [daysUntilListExpires, setDaysUntilListExpires] = useState<string>('');
+  const [avatar, setAvatar] = useState<string>('');
+  const [isEditAvatar, setIsEditAvatar] = useState<boolean>(false);
 
   useEffect(() => {
     setUsername('');
@@ -48,6 +55,7 @@ const UserLayout = () => {
       setAlias(user.alias);
       setDaysUntilEntryExpires(user.daysUntilEntryExpires);
       setDaysUntilListExpires(user.daysUntilListExpires);
+      setAvatar(user.image);
     } else {
       //nothing for now
     }
@@ -81,8 +89,8 @@ const UserLayout = () => {
         password: password,
         image: DEFAULT_IMAGE,
         alias: '',
-        daysUntilEntryExpires: 'never',
-        daysUntilListExpires: 'never',
+        daysUntilEntryExpires: '-1',
+        daysUntilListExpires: '-1',
         theme: 'default',
       });
       if (user) {
@@ -97,105 +105,158 @@ const UserLayout = () => {
   const handleEditProfile = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (id) {
-      await updateUserSettings(id, alias, daysUntilListExpires);
+      await updateUserSettings(
+        id,
+        alias,
+        daysUntilListExpires,
+        daysUntilEntryExpires
+      );
       setUser({
         ...user,
         alias: alias,
         daysUntilListExpires: daysUntilListExpires,
+        daysUntilEntryExpires: daysUntilEntryExpires,
       });
       toast.success('Settings updated.');
+    }
+  };
+
+  const handleEditProfileImage = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (id) {
+      await updateUserProfileImage(id, avatar);
+      setUser({
+        ...user,
+        image: avatar,
+      });
+      toast.success('Profile Image udpated.');
     }
   };
 
   return (
     <div className='flex w-screen h-screen justify-center items-center bg-slate-700 text-slate-800'>
       <div className='w-1/3 h-5/8 bg-gray-100 rounded-2xl flex flex-col'>
-        <div className='w-100 flex flex-row items-center justify-center'>
-          <Link
-            to='/'
-            className='justify-start w-50'
-          >
-            &#60; back
-          </Link>
-          <h1 className='text-5xl text-slate-800 py-10 w-50 '>
+        <Link
+          to='/'
+          className='justify-start w-50 pt-10'
+        >
+          &#60; back
+        </Link>
+        <div className='w-full flex flex-row items-center justify-center py-5 pb-10'>
+          {id && !isEditAvatar && (
+            <img
+              className='cursor-pointer hover:scale-130'
+              src={avatar}
+              onClick={() => {
+                setIsEditAvatar(true);
+              }}
+            />
+          )}
+          <h2 className='text-3xl text-slate-800 w-50 whitespace-nowrap '>
             {isLogin && 'LOGIN'}
             {isRegister && 'REGISTER'}
-            {id && `${user.alias ? alias : user.username}`}
-          </h1>
+            {isEditAvatar && 'PROFILE IMAGE'}
+            {id && `${alias ? (isEditAvatar ? '' : alias) : user.username}`}
+          </h2>
         </div>
-        {id && (
-          <form
-            className='flex flex-col gap-6 items-center'
-            onSubmit={handleEditProfile}
-          >
-            <div className='flex flex-row items-center'>
-              <span className='w-50 text-right pr-2'>Username:</span>
-              <span className='w-50 text-left pl-2'>{user.username}</span>
-            </div>
-            <div className='flex flex-row items-center'>
-              <span className='w-50 text-right pr-2'>Nickname:</span>
-              <input
-                type='text'
-                placeholder='Optional Alias'
-                className='w-50 bg-gray-200 p-2'
-                value={alias}
-                onChange={(event) => {
-                  setAlias(event.target.value);
-                }}
-              />
-            </div>
-            <div className='flex flex-row items-center'>
-              <span className='w-50 text-right pr-2'>Delete Old Lists:</span>
-              <select
-                name=''
-                id=''
-                className='w-50 bg-gray-200 p-2'
-                onChange={(event) => {
-                  setDaysUntilListExpires(event.target.value);
-                }}
-                defaultValue={daysUntilListExpires}
+        {id &&
+          (isEditAvatar ? (
+            <div className='flex flex-col gap-6 items-center'>
+              <form
+                action=''
+                className='w-50 h-50 flex flex-col gap-5'
+                onSubmit={handleEditProfileImage}
               >
-                {AUTO_DELETE_OPTIONS.map((option, index) => (
-                  <option
-                    key={index}
-                    value={option.value}
-                  >
-                    {option.option}
-                  </option>
-                ))}
-              </select>
+                <input type='file' />
+                <button
+                  type='submit'
+                  className='text-gray-100'
+                >
+                  Submit
+                </button>
+              </form>
             </div>
-            <div className='flex flex-row items-center'>
-              <span className='w-50 text-right pr-2'>
-                Delete Old Journal Entries:
-              </span>
-              <select
-                name=''
-                id=''
-                className='w-50 bg-gray-200 p-2'
-              >
-                <option value='-1'>Never</option>
-                <option value='365'>After a Year</option>
-                <option value='30'>After a Month</option>
-                <option value='10'>10 Days</option>
-                <option value='3'>3 Days</option>
-                <option value='1'>1 Day</option>
-              </select>
-            </div>
-            <div className='flex flex-row items-center'>
-              <span className='w-50 text-right pr-2'>Theme Select:</span>
-              <span className='w-50'>
-                <ModeToggle />
-              </span>
-            </div>
-            <button
-              className='text-gray-200'
-              type='submit'
+          ) : (
+            <form
+              className='flex flex-col gap-6 items-center'
+              onSubmit={handleEditProfile}
             >
-              Save
-            </button>
-          </form>
-        )}
+              <div className='flex flex-row items-center'>
+                <span className='w-50 text-right pr-2'>Username:</span>
+                <span className='w-50 text-left pl-2'>{user.username}</span>
+              </div>
+              <div className='flex flex-row items-center'>
+                <span className='w-50 text-right pr-2'>Nickname:</span>
+                <input
+                  type='text'
+                  placeholder='Optional'
+                  className='w-50 bg-gray-200 p-2'
+                  value={alias}
+                  onChange={(event) => {
+                    setAlias(event.target.value);
+                  }}
+                />
+              </div>
+              <div className='flex flex-row items-center'>
+                <span className='w-50 text-right pr-2'>
+                  Delete Old Calendar Lists:
+                </span>
+                <select
+                  name=''
+                  id=''
+                  className='w-50 bg-gray-200 p-2'
+                  onChange={(event) => {
+                    setDaysUntilListExpires(event.target.value);
+                  }}
+                >
+                  {AUTO_DELETE_OPTIONS.map((option, index) => (
+                    <option
+                      key={index}
+                      value={option.value}
+                      selected={daysUntilListExpires === option.value}
+                    >
+                      {option.option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className='flex flex-row items-center'>
+                <span className='w-50 text-right pr-2'>
+                  Delete Old Journal Entries:
+                </span>
+                <select
+                  name=''
+                  id=''
+                  className='w-50 bg-gray-200 p-2'
+                  onChange={(event) => {
+                    setDaysUntilEntryExpires(event.target.value);
+                  }}
+                >
+                  {AUTO_DELETE_OPTIONS.map((option, index) => (
+                    <option
+                      key={index}
+                      value={option.value}
+                      selected={daysUntilEntryExpires === option.value}
+                    >
+                      {option.option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className='flex flex-row items-center'>
+                <span className='w-50 text-right pr-2'>Theme Select:</span>
+                <span className='w-50'>
+                  <ModeToggle />
+                </span>
+              </div>
+              <button
+                className='text-gray-200'
+                type='submit'
+              >
+                Save
+              </button>
+            </form>
+          ))}
         {(isLogin || isRegister) && (
           <form
             className='my-2 flex flex-col gap-6 items-center'

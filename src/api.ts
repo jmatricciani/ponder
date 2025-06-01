@@ -148,7 +148,8 @@ export const getAllUsers = async (): Promise<DBUser[]> => {
 export const updateUserSettings = async (
   id: string,
   alias: string,
-  daysUntilListExpires: string
+  daysUntilListExpires: string,
+  daysUntilEntryExpires: string
 ) => {
   await fetch(`${baseUrl}/users/${id}`, {
     method: 'PATCH',
@@ -156,6 +157,17 @@ export const updateUserSettings = async (
     body: JSON.stringify({
       alias: alias,
       daysUntilListExpires: daysUntilListExpires,
+      daysUntilEntryExpires: daysUntilEntryExpires,
+    }),
+  });
+};
+
+export const updateUserProfileImage = async (id: string, image: string) => {
+  await fetch(`${baseUrl}/users/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      image: image,
     }),
   });
 };
