@@ -167,7 +167,11 @@ const UserLayout = () => {
                 className='w-50 h-50 flex flex-col gap-5'
                 onSubmit={handleEditProfileImage}
               >
-                <input type='file' />
+                <input
+                  type='file'
+                  onChange={(event) => setAvatar(event.target.value)}
+                />
+
                 <button
                   type='submit'
                   className='text-gray-100'

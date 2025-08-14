@@ -3,7 +3,7 @@ import { DBUser, TAuthContext } from './AuthProvider';
 
 export const AuthContext = createContext<TAuthContext>({} as TAuthContext);
 
-export const DEFAULT_IMAGE: string = '/public/assets/react.svg';
+export const DEFAULT_IMAGE: string = '/assets/react.svg';
 
 export const DEFAULT_USER: DBUser = {
   id: '',
