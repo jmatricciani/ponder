@@ -7,6 +7,7 @@ import {
   AccordionTrigger,
 } from "./accordion";
 import { format } from "date-fns";
+import ButtonSidebar from "../buttons/ButtonSidebar";
 
 interface Props {
   journalEntries?: DBJournalEntry[];
@@ -21,7 +22,6 @@ const displayJournalEntries = (journalEntries: DBJournalEntry[]) => {
   const months = Array.from(
     new Set(dates.map((date) => format(date, "MMMM y")))
   );
-  console.log("display");
   return months.map((month) => (
     <Accordion className="text-gray-100 bg-[#242424]" type="single" collapsible>
       <AccordionItem value={month}>
@@ -53,32 +53,48 @@ const displayTaskLists = (
   tasks: DBTask[],
   navigate: NavigateFunction
 ) => {
+  console.log(tasks);
+
   return taskLists.map((list) => (
-    <Accordion className="text-gray-100 bg-[#242424]" type="single" collapsible>
-      <AccordionItem value={list.id}>
-        <AccordionTrigger>{list.title}</AccordionTrigger>
-        <AccordionContent>
-          <ul className="flex flex-col gap-1 items-start mx-8 text-left">
-            <button
-              className="self-end"
-              onClick={() => {
-                navigate(`/tasks/${list.id}`);
-              }}
-            >
-              view &#62;
-            </button>
-            {tasks
-              .filter((task) => task.list_id === list.id && !task.completed)
-              .map((task) => (
-                <li>&#x2022; {task.content}</li>
-              ))}
-            {tasks.filter((task) => task.list_id === list.id && !task.completed)
-              .length === 0 && <li>All Tasks Completed</li>}
-          </ul>
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+    <>
+      <ButtonSidebar onClickMethod={() => navigate(`/tasks/${list.id}`)}>
+        {list.title}
+      </ButtonSidebar>
+      {/* <div
+        onClick={() => {
+          navigate(`/tasks/${list.id}`);
+        }}
+      >
+        {list.title}
+      </div> */}
+    </>
   ));
+  // return taskLists.map((list) => (
+  // <Accordion className="text-gray-100 bg-[#242424]" type="single" collapsible>
+  //   <AccordionItem value={list.id}>
+  //     <AccordionTrigger>{list.title}</AccordionTrigger>
+  //     <AccordionContent>
+  //       <ul className="flex flex-col gap-1 items-start mx-8 text-left">
+  //         <button
+  //           className="self-end"
+  //           onClick={() => {
+  //             navigate(`/tasks/${list.id}`);
+  //           }}
+  //         >
+  //           view &#62;
+  //         </button>
+  //         {tasks
+  //           .filter((task) => task.list_id === list.id && !task.completed)
+  //           .map((task) => (
+  //             <li>&#x2022; {task.content}</li>
+  //           ))}
+  //         {tasks.filter((task) => task.list_id === list.id && !task.completed)
+  //           .length === 0 && <li>All Tasks Completed</li>}
+  //       </ul>
+  //     </AccordionContent>
+  //   </AccordionItem>
+  // </Accordion>
+  // ));
 };
 
 const SideBar = ({ journalEntries, taskLists, tasks }: Props) => {

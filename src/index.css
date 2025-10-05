@@ -35,16 +35,41 @@ h1 {
   line-height: 1.1;
 }
 
+.total-words-icon {
+  content: url("/src/assets/icons/totalWords.svg");
+  width: 22px;
+  height: 22px;
+  /* display: block; */
+  /* fill: #213547; */
+}
+.total-chars-icon {
+  content: url("/src/assets/icons/totalChar.svg");
+  width: 22px;
+  height: 22px;
+  /* color: red; */
+  /* display: block; */
+}
+
+.chev-right {
+  content: url("/src/assets/icons/ChevRight.svg");
+  width: 22px;
+  height: 22px;
+}
+.chev-left {
+  content: url("/src/assets/icons/ChevLeft.svg");
+  width: 22px;
+  height: 22px;
+}
 button {
   border-radius: 8px;
-  border: 1px solid transparent;
+  /* border: 1px solid transparent; */
   padding: 0.6em 1.2em;
   /* font-size: 1em; */
   font-weight: 500;
   font-family: inherit;
-  background-color: #292929;
+  /* background-color: #292929; */
   cursor: pointer;
-  transition: border-color 0.25s;
+  /* transition: border-color 0.25s; */
 }
 button:hover {
   border-color: #a3a4c0;

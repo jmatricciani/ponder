@@ -14,6 +14,8 @@ import { dateToString } from "../../utils/date";
 import { useNavigate, useParams } from "react-router";
 import { wordCount } from "../../utils/string";
 import { format } from "date-fns";
+import ButtonPrimary from "../buttons/ButtonPrimary";
+import ButtonInfo from "../buttons/ButtonInfo";
 
 const JournalLayout = () => {
   const formRef = useRef<HTMLFormElement>(null);
@@ -82,7 +84,7 @@ const JournalLayout = () => {
         <SideBar id={id} journalEntries={entries} update={refetchEntries} />
         <div className="w-[80vw] flex flex-col px-32 max-w-[1200px] py-10 mx-auto">
           <span className="flex flex-row justify-left gap-4">
-            <h2 className="text-lg font-semibold text-gray-100 py-6">
+            <h2 className="text-xl font-semibold text-gray-100 py-6">
               {fetchedEntry
                 ? format(
                     new Date(fetchedEntry.createdAt),
@@ -111,13 +113,13 @@ const JournalLayout = () => {
                 ))}
               </div>
 
-              <div className="flex place-content-around w-3/4 items-center m-auto">
-                <span className="text-sm text-gray-100">
-                  Character Count: {fetchedEntry.content.length}
-                </span>
-                <span className="text-sm text-gray-100">
-                  Word Count: {wordCount(fetchedEntry.content)}
-                </span>
+              <div className="flex gap-8 w-3/4 items-center">
+                <ButtonInfo icon="total-chars-icon">
+                  {fetchedEntry.content.length}
+                </ButtonInfo>
+                <ButtonInfo icon="total-words-icon">
+                  {wordCount(fetchedEntry.content)}
+                </ButtonInfo>
               </div>
             </>
           ) : (
@@ -133,22 +135,16 @@ const JournalLayout = () => {
               ></textarea>
 
               <div className="flex w-3/4 items-center gap-8">
-                <button
-                  type="button"
-                  className="text-white text-sm"
-                  onClick={() => setContent("")}
-                >
+                <ButtonPrimary onClickMethod={() => setContent("")}>
                   Start Over
-                </button>
-                <span className="text-gray-100 text-sm">
-                  Character Count: {content.length}
-                </span>
-                <span className="text-gray-100 text-sm">
-                  Word Count: {wordCount(content)}
-                </span>
-                <button type="submit" className="text-white text-base text-sm">
-                  Save
-                </button>
+                </ButtonPrimary>
+                <ButtonInfo icon="total-chars-icon">
+                  {content.length}
+                </ButtonInfo>
+                <ButtonInfo icon="total-words-icon">
+                  {wordCount(content)}
+                </ButtonInfo>
+                <ButtonPrimary submit>Save</ButtonPrimary>
               </div>
             </form>
           )}
