@@ -8,7 +8,7 @@ import { AuthContext, DEFAULT_IMAGE } from "@/providers/contexts";
 import { FormEvent, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useLocation, useNavigate, useParams } from "react-router";
-import { ModeToggle } from "../ui/mode-toggle";
+// import { ModeToggle } from "../ui/mode-toggle";
 
 const AUTO_DELETE_OPTIONS = [
   { value: "-1", option: "Never" },
@@ -137,7 +137,7 @@ const UserLayout = () => {
 
   return (
     <div className="flex w-screen h-screen justify-center items-center bg-neutral-800 text-gray-100">
-      <div className="w-1/2 h-5/8 bg-neutral-700 rounded-md overflow-y-auto flex flex-col">
+      <div className="w-1/2 bg-neutral-800 rounded-md overflow-y-auto flex flex-col">
         <Link to="/" className="justify-start w-50 pt-10">
           &#60; back
         </Link>
@@ -243,12 +243,12 @@ const UserLayout = () => {
                   ))}
                 </select>
               </div>
-              <div className="flex flex-row items-center">
+              {/* <div className="flex flex-row items-center">
                 <span className="w-50 text-right pr-2">Theme Select:</span>
                 <span className="w-50">
                   <ModeToggle />
                 </span>
-              </div>
+              </div> */}
               <button className="text-gray-200 mb-5" type="submit">
                 Save
               </button>

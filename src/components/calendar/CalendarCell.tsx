@@ -69,7 +69,10 @@ const CalendarCell: React.FC<React.PropsWithChildren<Props>> = ({
   ) : (
     <div
       onClick={handleCellClick}
-      className={clsx("h-full border-r border-b border-gray-500", className)}
+      className={clsx(
+        "h-full border-r border-b border-gray-500 min-h-[68px]",
+        className
+      )}
     >
       {children}
     </div>

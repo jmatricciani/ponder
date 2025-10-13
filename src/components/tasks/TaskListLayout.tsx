@@ -11,10 +11,10 @@ import {
   updateListTitle,
 } from "../../api";
 import Task from "./Task";
-import NavBar from "../ui/NavBar";
-import SideBar from "../ui/SideBar";
+import NavBar from "../navbars/NavBar";
+import SideBar from "../navbars/SideBar";
 import { useNavigate, useParams } from "react-router";
-import TaskCalendar from "./TaskCalendar";
+import ButtonPrimary from "../buttons/ButtonPrimary";
 
 const TaskListLayout = () => {
   const formRef = useRef<HTMLFormElement>(null);
@@ -93,8 +93,12 @@ const TaskListLayout = () => {
   };
 
   const handleDeleteList = async (id: string) => {
-    await deleteList(id);
-    navigate("/tasks");
+    const list = await deleteList(id);
+    console.log(list);
+    // Navigate based on list type DayList -> calendar , TaskList -> tasks
+    if (list.isDayList) navigate("/calendar");
+    else navigate("/tasks");
+    await refetchLists();
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -130,12 +134,7 @@ const TaskListLayout = () => {
     <>
       <NavBar />
       <div className="w-screen bg-neutral-800 h-[90vh] flex">
-        <SideBar
-          tasks={tasks}
-          taskLists={lists}
-          update={refetchLists}
-          id={id}
-        />
+        <SideBar taskLists={lists} id={id} />
         <div className="w-[80vw] max-w-[1200px] flex flex-col items-center py-6 mx-auto">
           {id ? (
             <>
@@ -237,13 +236,9 @@ const TaskListLayout = () => {
             </>
           ) : (
             <>
-              <TaskCalendar />
-              <button
-                className="mt-2 text-gray-100"
-                onClick={() => handleCreateList()}
-              >
+              <ButtonPrimary onClickMethod={() => handleCreateList()}>
                 Create List
-              </button>
+              </ButtonPrimary>
             </>
           )}
         </div>
