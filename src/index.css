@@ -17,9 +17,10 @@ a {
   font-weight: 500;
   color: #ddd;
   text-decoration: inherit;
+  transition-duration: 500ms;
 }
 a:hover {
-  color: rgb(73, 143, 248);
+  color: #47a0a3;
 }
 
 body {

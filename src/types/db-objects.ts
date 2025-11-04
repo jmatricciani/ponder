@@ -12,7 +12,7 @@ export type DBJournalEntry = {
 };
 
 export type TTask = {
-  user_id: number;
+  user_id: string;
   list_id: string;
   content: string;
   completed: boolean;

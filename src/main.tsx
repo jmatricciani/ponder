@@ -11,6 +11,8 @@ import UserLayout from "./components/user/UserLayout.tsx";
 import { ThemeProvider } from "./providers/ThemeProvider.tsx";
 import CalendarLayout from "./components/calendar/CalendarLayout.tsx";
 import JournalProvider from "./providers/JournalProvider.tsx";
+import ListProvider from "./providers/ListProvider.tsx";
+import CalendarProvider from "./providers/CalendarProvider.tsx";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +40,10 @@ const router = createBrowserRouter([
     Component: CalendarLayout,
   },
   {
+    path: "/calendar/:id",
+    Component: TaskListLayout,
+  },
+  {
     path: "/user",
     Component: UserLayout,
   },
@@ -59,10 +65,14 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
       <JournalProvider>
-        <ThemeProvider>
-          <Toaster />
-          <RouterProvider router={router} />
-        </ThemeProvider>
+        <ListProvider>
+          <CalendarProvider>
+            <ThemeProvider>
+              <Toaster />
+              <RouterProvider router={router} />
+            </ThemeProvider>
+          </CalendarProvider>
+        </ListProvider>
       </JournalProvider>
     </AuthProvider>
   </StrictMode>

@@ -7,12 +7,12 @@ import toast from "react-hot-toast";
 export type TJournalContext = {
   entry: DBJournalEntry | undefined;
   entries: DBJournalEntry[];
-  getEntry: (id: string | undefined) => Promise<void>;
   content: string;
+  currentDateTime: Date;
+  getEntry: (id: string | undefined) => Promise<void>;
+  refetchEntries: () => Promise<void>;
   setContent: React.Dispatch<React.SetStateAction<string>>;
   handleSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
-  currentDateTime: Date;
-  refetchEntries: () => Promise<void>;
 };
 
 const JournalProvider = ({ children }: { children: ReactNode }) => {

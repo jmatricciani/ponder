@@ -37,9 +37,9 @@ const CalendarCell: React.FC<React.PropsWithChildren<Props>> = ({
       const list = await getListOfDay(date);
       if (!list) {
         const newList = await createListOfDay(date);
-        navigate(`/tasks/${newList.id}`);
+        navigate(`/calendar/${newList.id}`);
       } else {
-        navigate(`/tasks/${list.id}`);
+        navigate(`/calendar/${list.id}`);
       }
     }
   };

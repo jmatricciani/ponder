@@ -1,12 +1,14 @@
 import { createContext } from "react";
 import { DBUser, TAuthContext } from "./AuthProvider";
 import { TJournalContext } from "./JournalProvider";
-import { DBJournalEntry } from "@/types/db-objects";
+import { DBJournalEntry, TTask } from "@/types/db-objects";
+import { TListContext } from "./ListProvider";
 
 export const AuthContext = createContext<TAuthContext>({} as TAuthContext);
 export const JournalContext = createContext<TJournalContext>(
   {} as TJournalContext
 );
+export const ListContext = createContext<TListContext>({} as TListContext);
 
 export const DEFAULT_IMAGE: string = "/assets/react.svg";
 
@@ -26,4 +28,12 @@ export const DEFAULT_USER: DBUser = {
   daysUntilEntryExpires: "never",
   daysUntilListExpires: "never",
   theme: "default",
+};
+
+export const DEFAULT_TASK: TTask = {
+  user_id: "",
+  list_id: "",
+  content: "",
+  completed: false,
+  hasDeadline: false,
 };

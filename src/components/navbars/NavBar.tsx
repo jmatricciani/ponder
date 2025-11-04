@@ -40,7 +40,9 @@ const NavBar = () => {
             <DropdownMenuTrigger>
               <div className="flex flex-row gap-2 items-center">
                 <img className="w-5 h-5" src={user.image} alt="" />
-                {user.alias ? user.alias : user.username}
+                <span className="text-gray-100 hover:text-[#47a0a3] duration-500">
+                  {user.alias ? user.alias : user.username}
+                </span>
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent>

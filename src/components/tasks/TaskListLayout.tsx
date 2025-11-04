@@ -1,90 +1,48 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
-import { DBTask, DBTaskList, TTask } from "../../types/db-objects";
-import toast from "react-hot-toast";
-import {
-  deleteList,
-  getAllLists,
-  getAllTasks,
-  getTaskList,
-  postTask,
-  postTaskList,
-  updateListTitle,
-} from "../../api";
+import { FormEvent, RefObject, useContext, useEffect, useRef } from "react";
 import Task from "./Task";
 import NavBar from "../navbars/NavBar";
 import SideBar from "../navbars/SideBar";
 import { useNavigate, useParams } from "react-router";
 import ButtonPrimary from "../buttons/ButtonPrimary";
+import { DEFAULT_TASK, ListContext } from "@/providers/contexts";
+import { deleteList, postTask, updateListTitle } from "@/api";
+import toast from "react-hot-toast";
 
 const TaskListLayout = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const titleRef = useRef<HTMLInputElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { id } = useParams();
-  const defaultTask: TTask = {
-    content: "",
-    user_id: 1,
-    completed: false,
-    list_id: "1",
-    hasDeadline: false,
-  };
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [content, setContent] = useState("");
-  const [title, setTitle] = useState("new");
-  const [tasks, setTasks] = useState<DBTask[]>([]);
-  const [fetchedList, setList] = useState<DBTaskList>();
-  const [lists, setLists] = useState<DBTaskList[]>([]);
-  const [taskHasDeadline, setTaskHasDeadline] = useState<boolean>(false);
-  const [taskDeadline, setTaskDeadline] = useState<string>("");
   const navigate = useNavigate();
-
-  useEffect(() => {
-    getList(id);
-    setIsEditing(false);
-    // refetchLists();
-    setTaskHasDeadline(false);
-    setTaskDeadline("");
-  }, [id]);
-
-  useEffect(() => {
-    if (fetchedList) {
-      refetchTasks();
-      setTitle(fetchedList.title);
-    }
-  }, [fetchedList]);
-
-  useEffect(() => {
-    refetchLists();
-    refetchTasks();
-  }, []);
+  const {
+    fetchedList,
+    isSubmitting,
+    lists,
+    isEditing,
+    title,
+    tasks,
+    content,
+    taskHasDeadline,
+    taskDeadline,
+    createNewList,
+    refetchLists,
+    setIsSubmitting,
+    getList,
+    setIsEditing,
+    setTitle,
+    setContent,
+    setTaskHasDeadline,
+    setTaskDeadline,
+    refetchTasks,
+  } = useContext(ListContext);
 
   useEffect(() => {
     inputRef.current?.scrollIntoView();
   }, [isSubmitting]);
 
-  const refetchLists = async () => {
-    const lists = await getAllLists();
-    setLists(lists.filter((list) => !list.isDayList));
-  };
-
-  const refetchTasks = async () => {
-    setTasks(await getAllTasks());
-  };
-
-  const getList = async (id: string | undefined) => {
-    if (id) {
-      setList(await getTaskList(id));
-    }
-  };
-
-  const createNewList = async (): Promise<DBTaskList> => {
-    return await postTaskList({
-      user_id: "1",
-      title: "new",
-      isDayList: false,
-    });
-  };
+  useEffect(() => {
+    getList(id);
+  }, [id, getList]);
 
   const handleCreateList = async () => {
     const list = await createNewList();
@@ -94,8 +52,6 @@ const TaskListLayout = () => {
 
   const handleDeleteList = async (id: string) => {
     const list = await deleteList(id);
-    console.log(list);
-    // Navigate based on list type DayList -> calendar , TaskList -> tasks
     if (list.isDayList) navigate("/calendar");
     else navigate("/tasks");
     await refetchLists();
@@ -105,11 +61,11 @@ const TaskListLayout = () => {
     event.preventDefault();
     setIsSubmitting(true);
     if (content !== "") {
-      defaultTask.content = content;
-      defaultTask.list_id = fetchedList?.id || "1";
-      defaultTask.hasDeadline = taskHasDeadline;
-      defaultTask.deadline = taskDeadline;
-      await postTask(defaultTask);
+      DEFAULT_TASK.content = content;
+      DEFAULT_TASK.list_id = fetchedList?.id || "1";
+      DEFAULT_TASK.hasDeadline = taskHasDeadline;
+      DEFAULT_TASK.deadline = taskDeadline;
+      await postTask(DEFAULT_TASK);
       toast.success("Task Saved!");
       setContent("");
       setTaskDeadline("");
@@ -119,11 +75,15 @@ const TaskListLayout = () => {
     setIsSubmitting(false);
   };
 
-  const handleTitleEdit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleTitleEdit = async (
+    event: FormEvent<HTMLFormElement>,
+    reference: RefObject<HTMLInputElement | null>
+  ) => {
     event.preventDefault();
-    if (titleRef.current) {
-      setTitle(titleRef.current.value);
-      await updateListTitle(fetchedList?.id || "1", titleRef.current.value);
+    if (reference.current) {
+      setTitle(reference.current.value);
+      await updateListTitle(fetchedList?.id || "1", reference.current.value);
+      setTitle("");
       setIsEditing(false);
       await getList(fetchedList?.id);
       await refetchLists();
@@ -134,12 +94,12 @@ const TaskListLayout = () => {
     <>
       <NavBar />
       <div className="w-screen bg-neutral-800 h-[90vh] flex">
-        <SideBar taskLists={lists} id={id} />
+        <SideBar taskLists={lists} />
         <div className="w-[80vw] max-w-[1200px] flex flex-col items-center py-6 mx-auto">
           {id ? (
             <>
               {isEditing ? (
-                <form onSubmit={handleTitleEdit}>
+                <form onSubmit={(event) => handleTitleEdit(event, titleRef)}>
                   <input
                     className="text-gray-100 my-6 p-2 text-md"
                     type="text"
@@ -153,7 +113,12 @@ const TaskListLayout = () => {
                 <span className="flex">
                   <h2
                     className="text-lg font-bold text-gray-100 py-6"
-                    onDoubleClick={() => setIsEditing(true)}
+                    onDoubleClick={() => {
+                      if (fetchedList) {
+                        setTitle(fetchedList.title);
+                      }
+                      setIsEditing(true);
+                    }}
                   >
                     {fetchedList?.title}
                   </h2>
@@ -169,7 +134,6 @@ const TaskListLayout = () => {
                 {tasks
                   .filter((task) => task.list_id === id)
                   .filter((task) => task.hasDeadline)
-                  //better sorting method
                   .sort((a, b) => {
                     const timeA = a.deadline?.split(":");
                     const timeB = b.deadline?.split(":");
