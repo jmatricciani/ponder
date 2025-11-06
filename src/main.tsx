@@ -41,7 +41,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/calendar/:id",
-    Component: TaskListLayout,
+    Component: CalendarLayout,
   },
   {
     path: "/user",
