@@ -3,16 +3,16 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
-import JournalLayout from "./components/journal/JournalLayout.tsx";
 import { Toaster } from "react-hot-toast";
-import TaskListLayout from "./components/tasks/TaskListLayout.tsx";
 import AuthProvider from "./providers/AuthProvider.tsx";
-import UserLayout from "./components/user/UserLayout.tsx";
 import { ThemeProvider } from "./providers/ThemeProvider.tsx";
-import CalendarLayout from "./components/calendar/CalendarLayout.tsx";
 import JournalProvider from "./providers/JournalProvider.tsx";
 import ListProvider from "./providers/ListProvider.tsx";
 import CalendarProvider from "./providers/CalendarProvider.tsx";
+import JournalLayout from "@/components/layouts/JournalLayout.tsx";
+import TaskListLayout from "@/components/layouts/TaskListLayout.tsx";
+import CalendarLayout from "@/components/layouts/CalendarLayout.tsx";
+import UserLayout from "@/components/layouts/UserLayout.tsx";
 
 const router = createBrowserRouter([
   {

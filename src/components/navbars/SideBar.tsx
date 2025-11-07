@@ -8,6 +8,8 @@ import {
 } from "../ui/accordion";
 import { format } from "date-fns";
 import ButtonSidebar from "../buttons/ButtonSidebar";
+import { useContext } from "react";
+import { ListContext } from "@/providers/contexts";
 
 interface Props {
   journalEntries?: DBJournalEntry[];
@@ -54,11 +56,12 @@ const displayJournalEntries = (journalEntries: DBJournalEntry[]) => {
 
 const displayTaskLists = (
   taskLists: DBTaskList[],
-  navigate: NavigateFunction
+  navigate: NavigateFunction,
+  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   return taskLists.map((list) => (
     <>
-      <ButtonSidebar onClickMethod={() => navigate(`/tasks/${list.id}`)}>
+      <ButtonSidebar onClickMethod={() => { navigate(`/tasks/${list.id}`); setIsEditing(false); }}>
         {list.title}
       </ButtonSidebar>
     </>
@@ -67,10 +70,11 @@ const displayTaskLists = (
 
 const SideBar = ({ journalEntries, taskLists }: Props) => {
   const navigate = useNavigate();
+  const { setIsEditing } = useContext(ListContext);
   return (
     <div className="bg-[#242424] flex flex-col w-[20vw] overflow-y-auto">
       {journalEntries && displayJournalEntries(journalEntries)}
-      {taskLists && displayTaskLists(taskLists, navigate)}
+      {taskLists && displayTaskLists(taskLists, navigate, setIsEditing)}
     </div>
   );
 };

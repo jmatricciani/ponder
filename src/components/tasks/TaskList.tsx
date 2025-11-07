@@ -1,6 +1,8 @@
 import Task from "./Task";
 import { ListContext } from "@/providers/contexts";
-import { useRef, useContext, useEffect } from "react";
+import {
+  useRef, useContext, useEffect
+} from "react";
 import { useNavigate, useParams } from "react-router";
 import { deleteList, postTask } from "@/api";
 import { DEFAULT_TASK } from "@/providers/contexts";
