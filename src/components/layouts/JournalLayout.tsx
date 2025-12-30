@@ -10,6 +10,7 @@ import ButtonPrimary from "../buttons/ButtonPrimary";
 import ButtonInfo from "../buttons/ButtonInfo";
 import { JournalContext } from "@/providers/contexts";
 import { deleteEntry } from "@/api";
+import ButtonBack from "../buttons/ButtonBack";
 
 const JournalLayout = () => {
   const formRef = useRef<HTMLFormElement>(null);
@@ -72,12 +73,15 @@ const JournalLayout = () => {
           {entry ? (
             <>
               <div className="text-base w-full h-[60vh] mx-auto mt-3 mb-3 overflow-y-auto text-left text-gray-100">
-                {entry.content.split("\n").map((paragraph) => (
-                  <p className="pb-2">{paragraph}</p>
+                {entry.content.split("\n").map((paragraph, index) => (
+                  <p key={index} className="pb-2">{paragraph}</p>
                 ))}
               </div>
 
               <div className="flex gap-8 w-3/4 items-center pt-6">
+                <ButtonBack navigateTo="/journal">
+                  back
+                </ButtonBack>
                 <ButtonInfo icon="total-chars-icon">
                   {entry.content.length}
                 </ButtonInfo>

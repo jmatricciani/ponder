@@ -1,103 +1,65 @@
-import { useEffect, useState } from "react";
 import CalendarCell from "./CalendarCell";
 import { dateToString } from "../../utils/date";
 import {
   add,
-  differenceInDays,
-  endOfMonth,
   format,
-  startOfMonth,
-  sub,
+  isAfter,
+  isSameMonth,
+  isSameYear,
+  min,
+  sub
 } from "date-fns";
-import { DBTask, DBTaskList } from "../../types/db-objects";
-import { getAllLists, getAllTasks } from "../../api";
-
-const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-// const PREV_DAY_LIMIT = 3;
+import {
+  CalendarContext,
+  DAYS_OF_WEEK
+} from "@/providers/contexts";
+import {
+  useEffect,
+  useContext
+} from "react";
+import toast from "react-hot-toast";
 
 const TaskCalendar = () => {
-  const [date, setDate] = useState<Date>(new Date());
-  const [dayLists, setDayLists] = useState<DBTaskList[]>([]);
-  const [allTasks, setAllTasks] = useState<DBTask[]>([]);
-  const firstOfMonth = startOfMonth(date);
-  const lastOfMonth = endOfMonth(date);
-
-  const daysInMonth = differenceInDays(lastOfMonth, firstOfMonth) + 1;
-
-  const daysBeforeMonth = firstOfMonth.getDay();
-  const daysAfterMonth = 6 - lastOfMonth.getDay();
-
-  const getDayLists = async () => {
-    const lists = await getAllLists();
-    setDayLists(lists.filter((list) => list.isDayList));
-  };
-
-  const getTasks = async () => {
-    const tasks = await getAllTasks();
-    setAllTasks(tasks);
-  };
-
-  const getListByDate = (date: string) => {
-    return dayLists.filter((list) => list.title === date && list.isDayList)[0];
-  };
-
-  const getTasksByListId = (id: string) => {
-    return allTasks.filter((task) => task.list_id === id);
-  };
-
-  //fix this
-  // const isPrevDayList = (date: Date, currentDate: Date) => {
-  //   //make sure that a day list for the day actually exists
-  //   const diffInDays = differenceInDays(date, currentDate);
-  //   if (diffInDays < 0) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // };
-
-  const listHasDeadline = (date: string) => {
-    const list = getListByDate(date);
-    const tasks = getTasksByListId(list.id);
-    return tasks.filter((task) => task.hasDeadline).length > 0 ? true : false;
-  };
+  const {
+    date,
+    dayLists,
+    setDate,
+    highlightCells,
+    daysBeforeMonth,
+    daysAfterMonth,
+    daysInMonth,
+    getListByDate,
+    getTasksByListId,
+    getDayLists,
+    getTasks,
+  } = useContext(CalendarContext);
 
   useEffect(() => {
-    setDate(new Date()); //not really being used
     getDayLists();
     getTasks();
   }, []);
 
-  const highlightCells = (cellDate: Date) => {
-    const currentDate = new Date();
-    const lists = dayLists.map((list) => list.title);
-    const hasList = lists.includes(format(cellDate, "MM/dd/yy"));
-    if (hasList && differenceInDays(cellDate, currentDate) < 0) {
-      return "bg-gray-300 text-[#333] cursor-pointer";
-    } else if (
-      hasList &&
-      listHasDeadline(format(cellDate, "MM/dd/yy")) &&
-      differenceInDays(cellDate, currentDate) == 0
-    ) {
-      return "bg-red-400 text-[#333] cursor-pointer";
-    } else if (
-      format(cellDate, "MM/dd/yy") === format(currentDate, "MM/dd/yy")
-    ) {
-      return "bg-blue-300 text-[#333] cursor-pointer";
-    } else if (hasList && listHasDeadline(format(cellDate, "MM/dd/yy"))) {
-      return "bg-rose-300 text-[#333] cursor-pointer";
-    } else if (hasList && differenceInDays(cellDate, currentDate) >= 0) {
-      //conditional should be > 0, look into this
-      return "bg-green-300 text-[#333] cursor-pointer";
-    }
-  };
   return (
     <>
       <div className="flex flex-row items-center gap-5">
         <button
           className="h-1/2 flex"
           onClick={() => {
-            setDate(sub(date, { months: 1 }));
+            const earliestDayList = min(dayLists.map((list) => new Date(list.title)));
+            if (earliestDayList && isAfter(new Date(), earliestDayList)) {
+              if (isSameMonth(earliestDayList, date) && isSameYear(earliestDayList, date)
+              ) {
+                toast.error('Can not make lists from the past');
+              } else {
+                setDate(sub(date, { months: 1 }));
+              }
+            }
+            else if (isSameMonth(date, new Date())) {
+              toast.error('Can not make lists from the past');
+            }
+            else {
+              setDate(sub(date, { months: 1 }));
+            }
           }}
         >
           <i className="chev-left self-center"></i>
@@ -138,17 +100,17 @@ const TaskCalendar = () => {
             const deadlines =
               filterDeadlines.length > 0
                 ? filterDeadlines.sort((a, b) => {
-                    const timeA = a.deadline?.split(":");
-                    const timeB = b.deadline?.split(":");
-                    if (timeA && timeB) {
-                      if (timeA[0] === timeB[0]) {
-                        return Number(timeA[1]) - Number(timeB[1]);
-                      } else {
-                        return Number(timeA[0]) - Number(timeB[0]);
-                      }
+                  const timeA = a.deadline?.split(":");
+                  const timeB = b.deadline?.split(":");
+                  if (timeA && timeB) {
+                    if (timeA[0] === timeB[0]) {
+                      return Number(timeA[1]) - Number(timeB[1]);
+                    } else {
+                      return Number(timeA[0]) - Number(timeB[0]);
                     }
-                    return 0;
-                  })
+                  }
+                  return 0;
+                })
                 : undefined;
             return (
               <CalendarCell

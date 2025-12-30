@@ -16,7 +16,7 @@ interface Props {
   date?: Date;
   deadlines?: DBTask[];
 }
-
+// Rename and move to Provider
 const createListOfDay = async (date: Date): Promise<DBTaskList> => {
   return await postTaskList({
     user_id: "1",
@@ -32,6 +32,7 @@ const CalendarCell: React.FC<React.PropsWithChildren<Props>> = ({
   className = "",
 }) => {
   const navigate = useNavigate();
+
   const handleCellClick = async () => {
     if (date) {
       const list = await getListOfDay(date);
@@ -43,6 +44,7 @@ const CalendarCell: React.FC<React.PropsWithChildren<Props>> = ({
       }
     }
   };
+
   return deadlines ? (
     <HoverCard>
       <HoverCardTrigger>
@@ -59,10 +61,10 @@ const CalendarCell: React.FC<React.PropsWithChildren<Props>> = ({
       <HoverCardContent>
         {deadlines
           ? deadlines.map((task) => (
-              <h6 className="text-red-600">
-                {formatTime(task.deadline) + " - " + task.content}
-              </h6>
-            ))
+            <h6 className="text-red-600">
+              {formatTime(task.deadline) + " - " + task.content}
+            </h6>
+          ))
           : ""}
       </HoverCardContent>
     </HoverCard>

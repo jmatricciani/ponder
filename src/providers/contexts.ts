@@ -3,14 +3,19 @@ import { DBUser, TAuthContext } from "./AuthProvider";
 import { TJournalContext } from "./JournalProvider";
 import { DBJournalEntry, TTask } from "@/types/db-objects";
 import { TListContext } from "./ListProvider";
+import { TCalendarContext } from "./CalendarProvider";
 
 export const AuthContext = createContext<TAuthContext>({} as TAuthContext);
 export const JournalContext = createContext<TJournalContext>(
   {} as TJournalContext
 );
 export const ListContext = createContext<TListContext>({} as TListContext);
+export const CalendarContext = createContext<TCalendarContext>({} as TCalendarContext);
 
-export const DEFAULT_IMAGE: string = "/assets/react.svg";
+// Place all of the constants into their own config file
+export const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+export const DEFAULT_IMAGE: string = "vite.svg";
 
 export const DEFAULT_ENTRY: DBJournalEntry = {
   id: "",

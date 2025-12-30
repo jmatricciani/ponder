@@ -3,24 +3,26 @@ import SideBar from "../navbars/SideBar";
 import { useParams } from "react-router";
 import TaskList from "../tasks/TaskList";
 import TaskCalendar from "../calendar/TaskCalendar";
+import { ListContext } from "@/providers/contexts";
+import { useContext } from "react";
 
 const CalendarLayout = () => {
   const { id } = useParams();
+
+  const {
+    dayLists,
+  } = useContext(ListContext);
   return (
     <>
       <NavBar />
       <div className="w-screen bg-neutral-800 h-[90vh] flex">
-        <SideBar />
+        <SideBar dayLists={dayLists} />
 
         <div className="w-[80vw] max-w-[1200px] flex flex-col items-center py-6 mx-auto">
           {id ?
             (<TaskList />)
             :
-            (
-              <>
-                <TaskCalendar />
-              </>
-            )
+            (<TaskCalendar />)
           }
 
         </div>

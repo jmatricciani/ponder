@@ -1,15 +1,21 @@
 import Task from "./Task";
-import { ListContext } from "@/providers/contexts";
+import {
+  ListContext
+} from "@/providers/contexts";
 import {
   useRef, useContext, useEffect
 } from "react";
-import { useNavigate, useParams } from "react-router";
+import {
+  useLocation,
+  useNavigate, useParams
+} from "react-router";
 import { deleteList, postTask } from "@/api";
 import { DEFAULT_TASK } from "@/providers/contexts";
 import toast from "react-hot-toast";
 import { FormEvent } from "react";
 import { RefObject } from "react";
 import { updateListTitle } from "@/api";
+import ButtonBack from "../buttons/ButtonBack";
 
 const TaskList = () => {
   const formRef = useRef<HTMLFormElement>(null);
@@ -35,7 +41,10 @@ const TaskList = () => {
     setTaskHasDeadline,
     setTaskDeadline,
     refetchTasks,
+    refetchDayLists
   } = useContext(ListContext);
+
+  const location = useLocation();
 
   useEffect(() => {
     inputRef.current?.scrollIntoView();
@@ -48,10 +57,12 @@ const TaskList = () => {
   const handleDeleteList = async () => {
     if (id) {
       const list = await deleteList(id);
-      if (list.isDayList) navigate("/calendar");
+      if (list.isDayList)
+        navigate("/calendar");
       else navigate("/tasks");
-      await refetchLists();
     }
+    await refetchLists();
+    await refetchDayLists();
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -74,23 +85,25 @@ const TaskList = () => {
 
   const handleTitleEdit = async (
     event: FormEvent<HTMLFormElement>,
-    reference: RefObject<HTMLInputElement | null>
+    titleRef: RefObject<HTMLInputElement | null>,
+    inputRef: RefObject<HTMLInputElement | null>
   ) => {
     event.preventDefault();
-    if (reference.current) {
-      setTitle(reference.current.value);
-      await updateListTitle(fetchedList?.id || "1", reference.current.value);
+    if (titleRef.current) {
+      setTitle(titleRef.current.value);
+      await updateListTitle(fetchedList?.id || "1", titleRef.current.value);
       setTitle("");
       setIsEditing(false);
       await getList(fetchedList?.id);
       await refetchLists();
+      inputRef.current?.focus();
     }
   };
-
+  {/* This can be refactored to seperate components, they could be in a folder in the layouts section */ }
   return (
     <>
       {isEditing ? (
-        <form onSubmit={(event) => handleTitleEdit(event, titleRef)}>
+        <form onSubmit={(event) => handleTitleEdit(event, titleRef, inputRef)}>
           <input
             className="text-gray-100 my-6 p-2 text-md"
             type="text"
@@ -101,14 +114,17 @@ const TaskList = () => {
           />
         </form>
       ) : (
-        <span className="flex">
+        <span className="flex justify-center items-center gap-29">
+          <ButtonBack navigateTo={location.pathname.split('/')[1] == "tasks" ? "/tasks" : "/calendar"}>back</ButtonBack>
           <h2
             className="text-lg font-bold text-gray-100 py-6"
             onDoubleClick={() => {
-              if (fetchedList) {
-                setTitle(fetchedList.title);
+              if (location.pathname.split('/')[1] == "tasks") {
+                if (fetchedList) {
+                  setTitle(fetchedList.title);
+                }
+                setIsEditing(true);
               }
-              setIsEditing(true);
             }}
           >
             {fetchedList?.title}

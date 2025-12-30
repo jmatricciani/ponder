@@ -14,6 +14,7 @@ import { ListContext } from "@/providers/contexts";
 interface Props {
   journalEntries?: DBJournalEntry[];
   taskLists?: DBTaskList[];
+  dayLists?: DBTaskList[];
 }
 
 const displayJournalEntries = (journalEntries: DBJournalEntry[]) => {
@@ -23,6 +24,7 @@ const displayJournalEntries = (journalEntries: DBJournalEntry[]) => {
   );
   return months.map((month) => (
     <Accordion
+      key={month}
       className="text-neutral-100 bg-[#242424]"
       type="single"
       collapsible
@@ -40,7 +42,8 @@ const displayJournalEntries = (journalEntries: DBJournalEntry[]) => {
                 const date = new Date(entry.createdAt);
                 return (
                   <Link
-                    className="text-neutral-100"
+                    key={entry.id}
+                    className="text-neutral-100 journal-dropdown"
                     to={`/journal/${entry.id}`}
                   >
                     {format(date, "E, MMM dd - h:mm aaa")}
@@ -60,21 +63,31 @@ const displayTaskLists = (
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   return taskLists.map((list) => (
-    <>
-      <ButtonSidebar onClickMethod={() => { navigate(`/tasks/${list.id}`); setIsEditing(false); }}>
-        {list.title}
-      </ButtonSidebar>
-    </>
+    <ButtonSidebar key={list.id} onClickMethod={() => { navigate(`/tasks/${list.id}`); setIsEditing(false); }}>
+      {list.title}
+    </ButtonSidebar>
   ));
 };
 
-const SideBar = ({ journalEntries, taskLists }: Props) => {
+const displayDayLists = (
+  dayLists: DBTaskList[],
+  navigate: NavigateFunction,
+) => {
+  return dayLists.map((list) => (
+    <ButtonSidebar key={list.id} onClickMethod={() => { navigate(`/calendar/${list.id}`); }}>
+      {list.title}
+    </ButtonSidebar>
+  ));
+};
+
+const SideBar = ({ journalEntries, taskLists, dayLists }: Props) => {
   const navigate = useNavigate();
   const { setIsEditing } = useContext(ListContext);
   return (
-    <div className="bg-[#242424] flex flex-col w-[20vw] overflow-y-auto">
+    <div className="bg-[#242424] flex flex-col w-[20vw] max-w-[300px] overflow-y-auto">
       {journalEntries && displayJournalEntries(journalEntries)}
       {taskLists && displayTaskLists(taskLists, navigate, setIsEditing)}
+      {dayLists && displayDayLists(dayLists, navigate)}
     </div>
   );
 };
